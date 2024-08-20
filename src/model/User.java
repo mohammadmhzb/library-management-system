@@ -9,37 +9,14 @@ public abstract class User {
     private String email;
     private String username;
     private String phoneNumber;
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     private String password;
     private UserRol role;
 
 
-    public User(String firstName, String lastName, String email , String username , String phoneNumber , String password ,UserRol role) {
+    public User(String firstName, String lastName, String username, String password, UserRol role) {
         this.firstName = firstName;
         LastName = lastName;
-        this.email = email;
         this.username = username;
-        this.phoneNumber = phoneNumber;
         this.password = password;
         this.role = role;
     }
@@ -88,6 +65,25 @@ public abstract class User {
         this.role = role;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     //    authenticate
     public boolean authenticate(String password) {
