@@ -17,9 +17,7 @@ public abstract class User {
         this.firstName = firstName;
         LastName = lastName;
         this.username = username;
-        if (password != null) {
-            this.password = Utils.numberToHash(password);
-        }
+        setPassword(password);
         this.role = role;
     }
 
@@ -60,7 +58,7 @@ public abstract class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = Utils.numberToHash(password);
     }
 
     public void setRole(UserRole role) {
