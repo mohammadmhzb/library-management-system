@@ -7,8 +7,8 @@ import java.util.List;
 public class SystemAdmin extends User {
 
 
-    public SystemAdmin(String firstName, String lastName, String username, String password, UserRole role) {
-        super(firstName, lastName, username, password, role);
+    public SystemAdmin(String firstName, String lastName, String username, String password) {
+        super(firstName, lastName, username, password, UserRole.ADMIN);
 
     }
     public void viewAllBooks(List<Book> books) {

@@ -1,7 +1,7 @@
 # Library Management System
 
 ## Project Overview
-The **Library Management System** is a console-based application implemented in Java. The system is designed to manage book reservations within a library, providing functionalities for different roles: System Administrator, Reservation Manager, and Regular User. 
+The **Library Management System** is a console-based application implemented in Java. The system is designed to manage book reservations within a library, providing functionalities for different roles: System Administrator, Reservation Manager, and Regular User. The application follows SOLID principles and includes basic authentication and authorization mechanisms to ensure that each user has access to the appropriate functionalities.
 
 ## Project Structure
 The project is organized into the following files and folders:
@@ -11,6 +11,7 @@ library-management-system/
 ├── src/
 │   ├── main/
 │       ├── LibraryManagementSystem.java
+│       ├── AuthManager.java
 │   ├── enums/
 │       ├── BookAvailability.java
 │       ├── BookGenre.java
@@ -26,8 +27,8 @@ library-management-system/
 │   ├── repository/
 │       ├── BookRepository.java
 │       ├── ReservationRepository.java
-├── test/
-│   ├── .gitkeep
+    ├── test/
+│       ├── TestObjects.java
 ├── README.md
 └── .gitignore
 ```
@@ -72,6 +73,8 @@ library-management-system/
 - **Book Management:** Admins can add, view, and remove books.
 - **Reservation Management:** Managers can view, approve, and reject book reservations.
 - **User Reservations:** Users can view available books, request reservations, and manage their reservations.
+- **Authentication:** Users must log in with their credentials.
+- **Authorization:** Access to functionalities is based on user roles (Admin, Manager, User).
 
 ## Version Information
 - **Current Version:** 1.0.0
