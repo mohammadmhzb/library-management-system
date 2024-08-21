@@ -1,7 +1,7 @@
 package model;
 
-import enums.BookAvailability;
-import enums.UserRol;
+import enums.UserRole;
+import repository.ReservationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class RegularUser extends User {
 
     // Constructor
     public RegularUser(String firstName, String lastName, String username, String password) {
-        super(firstName, lastName, username, password, UserRol.REGULAR_USER);
+        super(firstName, lastName, username, password, UserRole.REGULAR_USER);
         this.requestedBooks = new ArrayList<>();
         this.reservedBooks = new ArrayList<>();
     }
@@ -30,9 +30,11 @@ public class RegularUser extends User {
     }
 
 
-    public void requestBookReservation(Book book) {
+    public void requestBookReservation(ReservationRepository reservationRepository, Book book) {
         if (book.getAvailability() == AVAILABLE) {
             requestedBooks.add(book);
+            Reservation reservation = new Reservation(this , book);
+            reservationRepository.addReservation(reservation);
             System.out.println("Reservation request submitted for book: " + book);
         } else {
             System.out.println("Book is not available for reservation: " + book);

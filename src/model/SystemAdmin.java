@@ -1,13 +1,13 @@
 package model;
 
-import enums.UserRol;
+import enums.UserRole;
 
 import java.util.List;
 
 public class SystemAdmin extends User {
 
 
-    public SystemAdmin(String firstName, String lastName, String username, String password, UserRol role) {
+    public SystemAdmin(String firstName, String lastName, String username, String password, UserRole role) {
         super(firstName, lastName, username, password, role);
 
     }

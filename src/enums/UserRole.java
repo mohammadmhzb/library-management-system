@@ -1,6 +1,6 @@
 package enums;
 
-public enum UserRol {
+public enum UserRole {
     ADMIN,
     MANAGER,
     REGULAR_USER,
