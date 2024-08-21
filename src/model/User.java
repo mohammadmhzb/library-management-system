@@ -1,6 +1,6 @@
 package model;
 
-import enums.UserRol;
+import enums.UserRole;
 
 public abstract class User {
     private int id;
@@ -10,10 +10,10 @@ public abstract class User {
     private String username;
     private String phoneNumber;
     private String password;
-    private UserRol role;
+    private UserRole role;
 
 
-    public User(String firstName, String lastName, String username, String password, UserRol role) {
+    public User(String firstName, String lastName, String username, String password, UserRole role) {
         this.firstName = firstName;
         LastName = lastName;
         this.username = username;
@@ -41,7 +41,7 @@ public abstract class User {
         return password;
     }
 
-    public UserRol getRole() {
+    public UserRole getRole() {
         return role;
     }
 
@@ -61,7 +61,7 @@ public abstract class User {
         this.password = password;
     }
 
-    public void setRole(UserRol role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 

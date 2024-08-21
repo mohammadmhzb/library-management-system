@@ -3,7 +3,7 @@ package main;
 import model.*;
 import repository.BookRepository;
 import repository.ReservationRepository;
-import enums.UserRol;
+import enums.UserRole;
 
 import java.util.Scanner;
 
@@ -24,7 +24,7 @@ public class LibraryManagementSystem {
 
             switch (choice) {
                 case 1:
-                    currentUser = new SystemAdmin("Ali", "Alizadeh", "Ali123", "Ali@123", UserRol.ADMIN);
+                    currentUser = new SystemAdmin("Ali", "Alizadeh", "Ali123", "Ali@123", UserRole.ADMIN);
                     systemAdminMenu();
                     break;
 //                case 2:

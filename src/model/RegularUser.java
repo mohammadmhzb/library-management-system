@@ -1,7 +1,6 @@
 package model;
 
-import enums.BookAvailability;
-import enums.UserRol;
+import enums.UserRole;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ public class RegularUser extends User {
 
     // Constructor
     public RegularUser(String firstName, String lastName, String username, String password) {
-        super(firstName, lastName, username, password, UserRol.REGULAR_USER);
+        super(firstName, lastName, username, password, UserRole.REGULAR_USER);
         this.requestedBooks = new ArrayList<>();
         this.reservedBooks = new ArrayList<>();
     }
