@@ -1,10 +1,13 @@
 package main;
 
+import enums.BookGenre;
 import model.*;
 import repository.BookRepository;
 import repository.ReservationRepository;
 import enums.UserRole;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LibraryManagementSystem {
@@ -12,30 +15,22 @@ public class LibraryManagementSystem {
     private static final BookRepository bookRepository = new BookRepository();
     private static final ReservationRepository reservationRepository = new ReservationRepository();
     private static User currentUser;
+    private static final List<User> users = new ArrayList<>();
+    private static final AuthManager authManager = new AuthManager(users, scanner);
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println("1. Login as System Admin");
-            System.out.println("2. Login as Reservation Manager");
-            System.out.println("3. Login as Regular User");
-            System.out.println("4. Exit");
+            System.out.println("1. Login");
+            System.out.println("2. Exit");
+
             int choice = scanner.nextInt();
             scanner.nextLine();  // Consume newline
 
             switch (choice) {
                 case 1:
-                    currentUser = new SystemAdmin("Ali", "Alizadeh", "Ali123", "Ali@123", UserRole.ADMIN);
-                    systemAdminMenu();
+                    authManager.Login();
                     break;
-//                case 2:
-//                    currentUser = new ReservationManager(2, "Manager", "manager@example.com");
-//                    reservationManagerMenu();
-//                    break;
-                case 3:
-                    currentUser = new RegularUser("Mehdi", "Mozafari", "Mehdi123", "Mehdi@123");
-                    regularUserMenu();
-                    break;
-                case 4:
+                case 2:
                     System.exit(0);
                     break;
                 default:
@@ -44,7 +39,11 @@ public class LibraryManagementSystem {
         }
     }
 
-    private static void systemAdminMenu() {
+    public static void setCurrentUser(User user){
+        currentUser = user;
+    }
+
+    public static void systemAdminMenu() {
         SystemAdmin admin = (SystemAdmin) currentUser;
         while (true) {
             System.out.println("1. View All Books");
@@ -83,10 +82,11 @@ public class LibraryManagementSystem {
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
+            System.out.println();
         }
     }
 
-//    private static void reservationManagerMenu() {
+//    public static void reservationManagerMenu() {
 //        ReservationManager manager = (ReservationManager) currentUser;
 //        while (true) {
 //            System.out.println("1. View Reservation Requests");
@@ -125,10 +125,11 @@ public class LibraryManagementSystem {
 //                default:
 //                    System.out.println("Invalid choice. Please try again.");
 //            }
+//          System.out.println();
 //        }
 //    }
 
-    private static void regularUserMenu() {
+    public static void regularUserMenu() {
         RegularUser user = (RegularUser) currentUser;
         while (true) {
             System.out.println("1. View Bookable Books");
@@ -143,6 +144,7 @@ public class LibraryManagementSystem {
             switch (choice) {
                 case 1:
                     user.viewBookableBooks(bookRepository.getAllBooks());
+
                     break;
                 case 2:
 //                    System.out.print("Enter Book ID to Reserve: ");
@@ -175,6 +177,7 @@ public class LibraryManagementSystem {
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
+            System.out.println();
         }
     }
 }
