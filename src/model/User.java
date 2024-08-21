@@ -17,7 +17,9 @@ public abstract class User {
         this.firstName = firstName;
         LastName = lastName;
         this.username = username;
-        this.password = password;
+        if (password != null) {
+            this.password = Utils.numberToHash(password);
+        }
         this.role = role;
     }
 
@@ -87,7 +89,7 @@ public abstract class User {
 
     //    authenticate
     public boolean authenticate(String password) {
-        return this.password.equals(password);
+        return this.password.equals(Utils.numberToHash(password));
     }
 
     @Override
