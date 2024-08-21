@@ -21,7 +21,8 @@ public class LibraryManagementSystem {
     public static void main(String[] args) {
         while (true) {
             System.out.println("1. Login");
-            System.out.println("2. Exit");
+            System.out.println("2. Register");
+            System.out.println("3. Exit");
 
             int choice = scanner.nextInt();
             scanner.nextLine();  // Consume newline
@@ -31,6 +32,9 @@ public class LibraryManagementSystem {
                     authManager.Login();
                     break;
                 case 2:
+                    authManager.register();
+                    break;
+                case 3:
                     System.exit(0);
                     break;
                 default:
