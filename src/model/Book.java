@@ -4,18 +4,16 @@ import enums.BookGenre;
 import enums.BookAvailability;
 
 public class Book {
-
     private String title;
     private String author;
     private int pages;
     private String ISBN;
     private BookGenre genre;
     private String language;
-    private BookAvailability availability ;
+    private BookAvailability availability;
 
     public Book(String title, String author, int pages, String isbn, BookGenre genre,
                 String language) {
-
         this.title = title;
         this.author = author;
         this.genre = genre;
@@ -74,15 +72,23 @@ public class Book {
         this.genre = genre;
     }
 
-    public String getLanguage() {return language;}
+    public String getLanguage() {
+        return language;
+    }
 
-    public void setLanguage(String language) {this.language = language;}
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
-    public BookAvailability getAvailability() {return availability;}
+    public BookAvailability getAvailability() {
+        return availability;
+    }
 
-    public void setAvailability(BookAvailability availability) {this.availability = availability;}
+    public void setAvailability(BookAvailability availability) {
+        this.availability = availability;
+    }
 
-    private boolean isValidISBN(String isbn ) {
+    private boolean isValidISBN(String isbn) {
         isbn = isbn.replaceAll("-", "").trim();
         if (isbn.length() == 10) {
             return isValidISBN10(isbn);
@@ -104,7 +110,7 @@ public class Book {
         return (sum % 11 == 0);
     }
 
-    private boolean isValidISBN13(String isbn ) {
+    private boolean isValidISBN13(String isbn) {
         int sum = 0;
         for (int index = 0; index < 13; index++) {
             if (!Character.isDigit(isbn.charAt(index))) return false;

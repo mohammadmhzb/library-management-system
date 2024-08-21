@@ -28,5 +28,9 @@ public class ReservationRepository {
     public Reservation findReservationByStatus(ReservationStatus status) {
         return reservations.stream().filter(reservation -> reservation.getStatus() == status).findFirst().orElse(null);
     }
+
+    public Reservation findReservationById(int id) {
+        return reservations.stream().filter(reservation -> reservation.getReservationId() == id).findFirst().orElse(null);
+    }
 }
 
