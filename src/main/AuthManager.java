@@ -74,7 +74,7 @@ public class AuthManager {
         if (role == UserRole.REGULAR_USER) {
             newUser = new RegularUser(firstName, lastName, username, password);
         }else if(role == UserRole.ADMIN){
-            newUser = new SystemAdmin(firstName, lastName, username, password, role);
+            newUser = new SystemAdmin(firstName, lastName, username, password);
         }else{
             newUser = new ReservationManager(firstName, lastName, username, password);
         }
