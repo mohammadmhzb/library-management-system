@@ -1,6 +1,7 @@
 package model;
 
 import enums.UserRole;
+import utils.Utils;
 
 public abstract class User {
     private int id;
