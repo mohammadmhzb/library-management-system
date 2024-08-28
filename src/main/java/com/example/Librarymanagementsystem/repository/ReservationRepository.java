@@ -1,35 +1,13 @@
 package com.example.Librarymanagementsystem.repository;
 
+import com.example.Librarymanagementsystem.model.Reservation;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class ReservationRepository {
-//    private final List<Reservation> reservations = new ArrayList<>();
-//
-//
-//    public void addReservation(Reservation reservation) {
-//        reservations.add(reservation);
-//    }
-//
-//
-//    public void removeReservation(Reservation reservation) {
-//        reservations.remove(reservation);
-//    }
-//
-//
-//    public List<Reservation> findAllReservations() {
-//        return new ArrayList<>(reservations);
-//    }
-//
-//
-//    public Reservation findReservationByStatus(ReservationStatus status) {
-//        return reservations.stream().filter(reservation -> reservation.getStatus() == status).findFirst().orElse(null);
-//    }
-//
-//    public Reservation findReservationById(int id) {
-//        return reservations.stream().filter(reservation -> reservation.getReservationId() == id).findFirst().orElse(null);
-//    }
+@Repository
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    List<Reservation> findByUserId(Long userId);
+    List<Reservation> findByBookId(Long bookId);
 }
-
