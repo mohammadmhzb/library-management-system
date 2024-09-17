@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+import java.util.List;
 
 
 @RestController
@@ -39,4 +39,17 @@ public class BookController {
         LOGGER.info(book.toString());
         return new ResponseEntity<>(bookService.addBook(book), HttpStatus.CREATED);
     }
+
+
+    @GetMapping("")
+    @Operation(summary = "Get all books", description = "Retrieve a list of all books in the library")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
+    }
+
+
 }
