@@ -1,6 +1,7 @@
 package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.model.Book;
+import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
 import com.example.Librarymanagementsystem.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -66,4 +67,15 @@ public class BookController {
     }
 
 
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a book", description = "Remove a book from the library by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted the book"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ApiResponseSchema> deleteBook(@Parameter(description = "ID of the book to be deleted") @PathVariable Long id) {
+        bookService.removeBook(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
