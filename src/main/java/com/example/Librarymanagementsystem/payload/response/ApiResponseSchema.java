@@ -13,7 +13,7 @@ import java.io.Serializable;
         "success",
         "message"
 })
-public class ApiResponse implements Serializable {
+public class ApiResponseSchema implements Serializable {
 
     @JsonIgnore
     private static final long serialVersionUID = 7702134516418120340L;
@@ -27,16 +27,16 @@ public class ApiResponse implements Serializable {
     @JsonIgnore
     private HttpStatus status;
 
-    public ApiResponse() {
+    public ApiResponseSchema() {
 
     }
 
-    public ApiResponse(Boolean success, String message) {
+    public ApiResponseSchema(Boolean success, String message) {
         this.success = success;
         this.message = message;
     }
 
-    public ApiResponse(Boolean success, String message, HttpStatus httpStatus) {
+    public ApiResponseSchema(Boolean success, String message, HttpStatus httpStatus) {
         this.success = success;
         this.message = message;
         this.status = httpStatus;
