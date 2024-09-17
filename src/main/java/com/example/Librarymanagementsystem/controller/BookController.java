@@ -3,6 +3,7 @@ package com.example.Librarymanagementsystem.controller;
 import com.example.Librarymanagementsystem.model.Book;
 import com.example.Librarymanagementsystem.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -49,6 +51,18 @@ public class BookController {
     })
     public ResponseEntity<List<Book>> getAllBooks() {
         return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get one book by id", description = "Retrieve a book by its unique Id in the library" )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved a book"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    public ResponseEntity<Optional<Book>> getBookById(@Parameter(description = "ID of the book to be retrieved") @PathVariable Long id) {
+        return new ResponseEntity<>(bookService.getBookById(id), HttpStatus.OK);
     }
 
 
