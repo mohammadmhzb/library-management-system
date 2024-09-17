@@ -1,111 +1,85 @@
 package com.example.Librarymanagementsystem.model;
 
-
+import com.example.Librarymanagementsystem.model.audit.DateAudit;
 import com.example.Librarymanagementsystem.model.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
-public abstract class User {
-    private int id;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@NoArgsConstructor
+@RequiredArgsConstructor
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"}),
+        @UniqueConstraint(columnNames = {"email"})})
+public class User extends DateAudit {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Unique identifier for the user", example = "1")
+    private Long id;
+
+    @NotBlank
+    @Column(name = "first_name")
+    @Size(max = 40)
+    @Schema(description = "First name of the user", example = "John")
+    @Setter
+    @Getter
+    @NonNull
     private String firstName;
-    private String LastName;
-    private String email;
+
+    @NotBlank
+    @Column(name = "last_name")
+    @Size(max = 40)
+    @Schema(description = "Last name of the user", example = "Doe")
+    @Setter
+    @Getter
+    @NonNull
+    private String lastName;
+
+    @NotBlank
+    @Column(name = "username")
+    @Size(max = 15)
+    @Schema(description = "Username of the user", example = "johndoe")
+    @Setter
+    @Getter
+    @NonNull
     private String username;
-    private String phoneNumber;
+
+    @NotBlank
+    @Size(max = 100)
+    @Column(name = "password")
+    @Schema(description = "Password for the user account", example = "password123")
+    @Getter
+    @Setter
+    @NonNull
     private String password;
-    private UserRole role;
 
+    @NotBlank
+    @NaturalId
+    @Size(max = 40)
+    @Column(name = "email")
+    @Email
+    @Schema(description = "Email address of the user", example = "john.doe@example.com")
+    @Setter
+    @Getter
+    @NonNull
+    private String email;
 
-    public User(String firstName, String lastName, String username, String password, UserRole role) {
-        this.firstName = firstName;
-        LastName = lastName;
-        this.username = username;
-//        setPassword(password);
-        this.role = role;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return LastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        LastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-//    public void setPassword(String password) {
-//        this.password = Utils.numberToHash(password);
-//    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    //    authenticate
-//    public boolean authenticate(String password) {
-//        return this.password.equals(Utils.numberToHash(password));
-//    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", LastName='" + LastName + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
-    }
-
-    public abstract void performAction();
-
+    @Column(name = "role")
+    @Schema(description = "Role of the user in the system", example = "USER", allowableValues = {"ADMIN",
+            "MANAGER",
+            "USER"}, defaultValue = "USER", nullable = true)
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER;
 
 }
