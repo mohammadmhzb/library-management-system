@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,7 +68,6 @@ public class BookController {
     }
 
 
-
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a book", description = "Remove a book from the library by its ID")
     @ApiResponses(value = {
@@ -78,4 +78,67 @@ public class BookController {
         bookService.removeBook(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a book (PUT)", description = "Update all fields of an existing book by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Book> updateBook(@Parameter(description = "ID of the book to be updated") @PathVariable Long id,
+                                           @RequestBody Book bookDetails) {
+        return bookService.getBookById(id)
+                .map(existingBook -> {
+                    existingBook.setTitle(bookDetails.getTitle());
+                    existingBook.setAuthor(bookDetails.getAuthor());
+                    existingBook.setPages(bookDetails.getPages());
+                    existingBook.setGenre(bookDetails.getGenre());
+                    existingBook.setLanguage(bookDetails.getLanguage());
+                    existingBook.setAvailability(bookDetails.getAvailability());
+                    Book updatedBook = bookService.addBook(existingBook);
+                    return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+    }
+
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Update specific fields of a book (PATCH)", description = "Update specific fields of an existing book by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Book> patchBook(@Parameter(description = "ID of the book to be updated") @PathVariable Long id,
+                                          @RequestBody Book bookDetails) {
+        return bookService.getBookById(id)
+                .map(existingBook -> {
+                    if (bookDetails.getTitle() != null) {
+                        existingBook.setTitle(bookDetails.getTitle());
+                    }
+                    if (bookDetails.getAuthor() != null) {
+                        existingBook.setAuthor(bookDetails.getAuthor());
+                    }
+                    if (bookDetails.getPages() > 0) {
+                        existingBook.setPages(bookDetails.getPages());
+                    }
+                    if (bookDetails.getGenre() != null) {
+                        existingBook.setGenre(bookDetails.getGenre());
+                    }
+                    if (bookDetails.getLanguage() != null) {
+                        existingBook.setLanguage(bookDetails.getLanguage());
+                    }
+                    if (bookDetails.getAvailability() != null) {
+                        existingBook.setAvailability(bookDetails.getAvailability());
+                    }
+                    Book updatedBook = bookService.addBook(existingBook);
+                    return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+    }
+
 }
