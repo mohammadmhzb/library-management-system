@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 @Service
 public class BookService {
-    private static  final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
-    private BookRepository bookRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
+    private final BookRepository bookRepository;
 
     @Autowired
     public BookService(BookRepository bookRepository) {
@@ -26,6 +26,7 @@ public class BookService {
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
+
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }
