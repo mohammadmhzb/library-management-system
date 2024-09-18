@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Data
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"}),
         @UniqueConstraint(columnNames = {"email"})})
 public class User extends DateAudit {
