@@ -1,12 +1,11 @@
-package com.example.Librarymanagementsystem.model;
+package com.example.Librarymanagementsystem.data.model;
 
-import com.example.Librarymanagementsystem.model.audit.DateAudit;
-import com.example.Librarymanagementsystem.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
+import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity

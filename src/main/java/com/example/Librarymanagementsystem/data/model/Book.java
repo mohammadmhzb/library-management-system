@@ -1,7 +1,7 @@
-package com.example.Librarymanagementsystem.model;
-import com.example.Librarymanagementsystem.model.audit.DateAudit;
-import com.example.Librarymanagementsystem.model.enums.BookAvailability;
-import com.example.Librarymanagementsystem.model.enums.BookGenre;
+package com.example.Librarymanagementsystem.data.model;
+import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
+import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
+import com.example.Librarymanagementsystem.data.model.enums.BookGenre;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
