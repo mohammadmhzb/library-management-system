@@ -83,4 +83,7 @@ public class User extends DateAudit {
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
 
+    @Version
+    private  Integer version;
+
 }

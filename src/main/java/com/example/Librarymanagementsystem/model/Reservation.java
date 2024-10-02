@@ -42,4 +42,7 @@ public class Reservation extends DateAudit {
             "APPROVED",
             "REJECTED"}, nullable = true, defaultValue = "PENDING")
     private ReservationStatus status = ReservationStatus.PENDING;
+
+    @Version
+    private  Integer version;
 }

@@ -66,6 +66,9 @@ public class Book extends DateAudit {
     @Schema(description = "Availability status of the book", example = "AVAILABLE", allowableValues = {"AVAILABLE", "CHECKED_OUT", "RESERVED"})
     private BookAvailability availability = BookAvailability.AVAILABLE;
 
+    @Version
+    private  Integer version;
+
 
     public Book(String title, String author, int pages, BookGenre genre, String language, BookAvailability availability) {
         this.title = title;
