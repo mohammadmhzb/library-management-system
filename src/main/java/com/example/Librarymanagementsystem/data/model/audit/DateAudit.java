@@ -1,4 +1,4 @@
-package com.example.Librarymanagementsystem.model.audit;
+package com.example.Librarymanagementsystem.data.model.audit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;

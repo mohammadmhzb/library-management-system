@@ -1,8 +1,8 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.model.Book;
+import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
-import com.example.Librarymanagementsystem.service.BookService;
+import com.example.Librarymanagementsystem.service.impl.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
