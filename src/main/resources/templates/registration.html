@@ -1,0 +1,48 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="eng">
+<body>
+<h1 th:text="#{label.form.title}">form</h1>
+<form action="/" th:object="${user}" method="POST" enctype="text/plain">
+    <div>
+        <label th:text="#{label.user.firstName}">first</label>
+        <label>
+            <input th:field="*{firstName}"/>
+        </label>
+        <p th:each="error: ${#fields.errors('firstName')}"
+           th:text="${error}">Validation error</p>
+    </div>
+    <div>
+        <label th:text="#{label.user.lastName}">last</label>
+        <label>
+            <input th:field="*{lastName}"/>
+        </label>
+        <p th:each="error : ${#fields.errors('lastName')}"
+           th:text="${error}">Validation error</p>
+    </div>
+    <div>
+        <label th:text="#{label.user.email}">email</label>
+        <label>
+            <input type="email" th:field="*{email}"/>
+        </label>
+        <p th:each="error : ${#fields.errors('email')}"
+           th:text="${error}">Validation error</p>
+    </div>
+    <div>
+        <label th:text="#{label.user.password}">password</label>
+        <label>
+            <input type="password" th:field="*{password}"/>
+        </label>
+        <p th:each="error : ${#fields.errors('password')}"
+           th:text="${error}">Validation error</p>
+    </div>
+    <div>
+        <label th:text="#{label.user.confirmPass}">confirm</label>
+        <label>
+            <input type="password" th:field="*{matchingPassword}"/>
+        </label>
+    </div>
+    <button type="submit" th:text="#{label.form.submit}">submit</button>
+</form>
+
+<a th:href="@{/login.html}" th:text="#{label.form.loginLink}">login</a>
+</body>
+</html>

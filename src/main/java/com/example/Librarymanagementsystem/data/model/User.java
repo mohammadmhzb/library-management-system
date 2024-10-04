@@ -2,6 +2,8 @@ package com.example.Librarymanagementsystem.data.model;
 
 import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
 import com.example.Librarymanagementsystem.data.model.enums.UserRole;
+import com.example.Librarymanagementsystem.validation.PasswordMatches;
+import com.example.Librarymanagementsystem.validation.ValidEmail;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
@@ -17,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Data
+@PasswordMatches
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"}),
         @UniqueConstraint(columnNames = {"email"})})
 public class User extends DateAudit {
@@ -64,6 +67,10 @@ public class User extends DateAudit {
     @NonNull
     private String password;
 
+    @Getter
+    @Setter
+    private String matchingPassword;
+
     @NotBlank
     @NaturalId
     @Size(max = 40)
@@ -73,6 +80,7 @@ public class User extends DateAudit {
     @Setter
     @Getter
     @NonNull
+    @ValidEmail
     private String email;
 
     @Column(name = "role")
