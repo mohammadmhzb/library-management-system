@@ -1,4 +1,4 @@
-package com.example.Librarymanagementsystem.model.enums;
+package com.example.Librarymanagementsystem.data.model.enums;
 
 public enum BookAvailability {
     AVAILABLE,

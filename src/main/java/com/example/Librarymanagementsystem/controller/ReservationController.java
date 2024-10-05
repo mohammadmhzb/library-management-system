@@ -1,9 +1,9 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.model.Reservation;
-import com.example.Librarymanagementsystem.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.data.model.Reservation;
+import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
-import com.example.Librarymanagementsystem.service.ReservationService;
+import com.example.Librarymanagementsystem.service.impl.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,14 +1,15 @@
-package com.example.Librarymanagementsystem.service;
+package com.example.Librarymanagementsystem.service.impl;
 
 
-import com.example.Librarymanagementsystem.model.Book;
-import com.example.Librarymanagementsystem.model.Reservation;
-import com.example.Librarymanagementsystem.model.User;
-import com.example.Librarymanagementsystem.model.enums.BookAvailability;
-import com.example.Librarymanagementsystem.model.enums.ReservationStatus;
-import com.example.Librarymanagementsystem.repository.BookRepository;
-import com.example.Librarymanagementsystem.repository.ReservationRepository;
-import com.example.Librarymanagementsystem.repository.UserRepository;
+import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.data.model.Reservation;
+import com.example.Librarymanagementsystem.data.model.User;
+import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
+import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.data.repository.BookRepository;
+import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
+import com.example.Librarymanagementsystem.data.repository.UserRepository;
+import com.example.Librarymanagementsystem.service.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class ReservationService {
+public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;

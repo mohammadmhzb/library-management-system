@@ -1,8 +1,9 @@
-package com.example.Librarymanagementsystem.service;
+package com.example.Librarymanagementsystem.service.impl;
 
-import com.example.Librarymanagementsystem.model.Book;
-import com.example.Librarymanagementsystem.model.enums.BookAvailability;
-import com.example.Librarymanagementsystem.repository.BookRepository;
+import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
+import com.example.Librarymanagementsystem.data.repository.BookRepository;
+import com.example.Librarymanagementsystem.service.IBookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 
 @Service
-public class BookService {
+public class BookService implements IBookService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
     private final BookRepository bookRepository;
 

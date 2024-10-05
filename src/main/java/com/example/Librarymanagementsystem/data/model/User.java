@@ -1,8 +1,7 @@
-package com.example.Librarymanagementsystem.model;
+package com.example.Librarymanagementsystem.data.model;
 
-import com.example.Librarymanagementsystem.model.audit.DateAudit;
-import com.example.Librarymanagementsystem.model.enums.UserRole;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
+import com.example.Librarymanagementsystem.data.model.enums.UserRole;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
@@ -82,5 +81,8 @@ public class User extends DateAudit {
             "USER"}, defaultValue = "USER", nullable = true)
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
+
+    @Version
+    private  Integer version;
 
 }

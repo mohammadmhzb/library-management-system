@@ -1,7 +1,7 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.model.User;
-import com.example.Librarymanagementsystem.service.UserService;
+import com.example.Librarymanagementsystem.data.model.User;
+import com.example.Librarymanagementsystem.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 

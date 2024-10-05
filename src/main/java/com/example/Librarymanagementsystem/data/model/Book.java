@@ -1,7 +1,7 @@
-package com.example.Librarymanagementsystem.model;
-import com.example.Librarymanagementsystem.model.audit.DateAudit;
-import com.example.Librarymanagementsystem.model.enums.BookAvailability;
-import com.example.Librarymanagementsystem.model.enums.BookGenre;
+package com.example.Librarymanagementsystem.data.model;
+import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
+import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
+import com.example.Librarymanagementsystem.data.model.enums.BookGenre;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -65,6 +65,9 @@ public class Book extends DateAudit {
     @Column(name = "availability")
     @Schema(description = "Availability status of the book", example = "AVAILABLE", allowableValues = {"AVAILABLE", "CHECKED_OUT", "RESERVED"})
     private BookAvailability availability = BookAvailability.AVAILABLE;
+
+    @Version
+    private  Integer version;
 
 
     public Book(String title, String author, int pages, BookGenre genre, String language, BookAvailability availability) {
