@@ -80,6 +80,8 @@ public class User extends DateAudit {
             "MANAGER",
             "USER"}, defaultValue = "USER", nullable = true)
     @Enumerated(EnumType.STRING)
+    @Getter
+    @Setter
     private UserRole role = UserRole.USER;
 
     @Version
