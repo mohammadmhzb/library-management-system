@@ -2,7 +2,6 @@ package com.example.Librarymanagementsystem.data.model;
 
 import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
 import com.example.Librarymanagementsystem.data.model.enums.UserRole;
-import com.example.Librarymanagementsystem.validation.PasswordMatches;
 import com.example.Librarymanagementsystem.validation.ValidEmail;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
@@ -13,16 +12,22 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Data
-@PasswordMatches
+@Builder
+@AllArgsConstructor
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"}),
         @UniqueConstraint(columnNames = {"email"})})
-public class User extends DateAudit {
+public class User extends DateAudit implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -35,8 +40,6 @@ public class User extends DateAudit {
     @Column(name = "first_name")
     @Size(max = 40)
     @Schema(description = "First name of the user", example = "John")
-    @Setter
-    @Getter
     @NonNull
     private String firstName;
 
@@ -45,7 +48,6 @@ public class User extends DateAudit {
     @Size(max = 40)
     @Schema(description = "Last name of the user", example = "Doe")
     @Setter
-    @Getter
     @NonNull
     private String lastName;
 
@@ -54,22 +56,17 @@ public class User extends DateAudit {
     @Size(max = 15)
     @Schema(description = "Username of the user", example = "johndoe")
     @Setter
-    @Getter
     @NonNull
     private String username;
 
+    @Getter
     @NotBlank
     @Size(max = 100)
     @Column(name = "password")
     @Schema(description = "Password for the user account", example = "password123")
-    @Getter
     @Setter
     @NonNull
     private String password;
-
-    @Getter
-    @Setter
-    private String matchingPassword;
 
     @NotBlank
     @NaturalId
@@ -88,9 +85,34 @@ public class User extends DateAudit {
             "MANAGER",
             "USER"}, defaultValue = "USER", nullable = true)
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role;
 
     @Version
     private  Integer version;
+
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
+    }
+
+    public String getUsername() {
+        return email;
+    }
+
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    public boolean isEnabled() {
+        return true;
+    }
 
 }
