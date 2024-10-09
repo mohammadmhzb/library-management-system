@@ -1,89 +1,50 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.data.model.User;
-import com.example.Librarymanagementsystem.service.impl.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.data.model.Reservation;
+import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
+import com.example.Librarymanagementsystem.service.impl.BookService;
+import com.example.Librarymanagementsystem.service.impl.ReservationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/users")
-@Tag(name = "Users API", description = "CRUD operations for managing users")
-@Slf4j
+@RequestMapping("/api/user")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class UserController {
-    private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    private final BookService bookService;
+    private final ReservationService reservationService;
+
+    public UserController(BookService bookService, ReservationService reservationService) {
+        this.bookService = bookService;
+        this.reservationService = reservationService;
     }
 
-    @GetMapping
-    @Operation(summary = "Get all users", description = "Retrieve a list of all users in the system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/books")
+    public List<Book> getAvailableBooks() {
+        return bookService.getAllBooks().stream().
+                filter(book -> book.getAvailability().
+                        equals(BookAvailability.AVAILABLE)).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get user by ID", description = "Retrieve a user by their unique ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved user"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<User> getUserById(@Parameter(description = "ID of the user to be retrieved") @PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/reservations/{userId}")
+    public List<Reservation> getUserReservations(@PathVariable Long userId) {
+        return reservationService.getReservationsByUserId(userId);
     }
 
-    @PostMapping
-    @Operation(summary = "Create a new user", description = "Add a new user to the system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully created a new user"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        log.info(user.toString());
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    @PostMapping("/reservations")
+    public Reservation requestReservation(@RequestBody Reservation reservation) throws Exception {
+        return reservationService.saveReservation(reservation);
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Update user", description = "Update an existing user's information")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated user"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<User> updateUser(@Parameter(description = "ID of the user to be updated") @PathVariable Long id,
-                                           @RequestBody User userDetails) {
-        User updatedUser = userService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete user", description = "Remove a user from the system by their ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully deleted the user"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<Void> deleteUser(@Parameter(description = "ID of the user to be deleted") @PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/reservations/{id}")
+    public void deleteReservation(@PathVariable Long id) {
+        reservationService.deleteReservation(id);
     }
 }
