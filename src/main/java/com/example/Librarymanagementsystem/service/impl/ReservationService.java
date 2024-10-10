@@ -9,13 +9,19 @@ import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
 import com.example.Librarymanagementsystem.data.repository.UserRepository;
+import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
+import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
+import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
 import com.example.Librarymanagementsystem.service.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class ReservationService implements IReservationService {
@@ -39,19 +45,14 @@ public class ReservationService implements IReservationService {
     }
 
     @Transactional
-    public Reservation saveReservation(Reservation reservation) throws Exception {
-        // Optional: Validate that the user and book exist
-
-        User user = userRepository.findById(reservation.getUser().getId())
-                .orElseThrow(() -> new Exception("User not found with id " + reservation.getUser().getId()));
-
-        Book book = bookRepository.findById(reservation.getBook().getId())
-                .orElseThrow(() -> new Exception("Book not found with id " + reservation.getBook().getId()));
-
-        reservation.setUser(user);
+    public Reservation saveReservation(ReservationRequest reservationRequest) throws Exception {
+        User userDetails = (User) SecurityContextHolder.getContext().
+                getAuthentication().getPrincipal();
+        Book book = bookRepository.findById(reservationRequest.getBookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + reservationRequest.getBookId()));
+        Reservation reservation = new Reservation();
+        reservation.setUser(userDetails);
         reservation.setBook(book);
-
-        // Save the reservation
         return reservationRepository.save(reservation);
     }
 
@@ -66,5 +67,27 @@ public class ReservationService implements IReservationService {
         if(status.equals(ReservationStatus.APPROVED))
             reservation.getBook().setAvailability(BookAvailability.RESERVED);
         return reservationRepository.save(reservation);
+    }
+
+    @Override
+    public List<Book> getReservedBooksByUser() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().
+                getAuthentication().getPrincipal();
+        Stream<Reservation> approvedReservations = getReservationsByUserId(userDetails.getId()).stream().
+                filter(reservation -> reservation.getStatus().equals(ReservationStatus.APPROVED));
+        List <Book> reservedBooks = new ArrayList<>();
+        approvedReservations.forEach(reservation -> reservedBooks.add(reservation.getBook()));
+        return reservedBooks;
+    }
+
+    @Override
+    public List<Book> getRequestedBooksByUser() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().
+                getAuthentication().getPrincipal();
+        Stream<Reservation> pendingReservations = getReservationsByUserId(userDetails.getId()).stream().
+                filter(reservation -> reservation.getStatus().equals(ReservationStatus.PENDING));
+        List <Book> requestedBooks = new ArrayList<>();
+        pendingReservations.forEach(reservation -> requestedBooks.add(reservation.getBook()));
+        return requestedBooks;
     }
 }

@@ -16,5 +16,7 @@ public interface IBookService {
     Book addBook(Book book);
 
     void removeBook(Long id);
+
+    List<Book> getAvailableBooks();
 }
 

@@ -3,14 +3,17 @@ package com.example.Librarymanagementsystem.service.impl;
 import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
+import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
 import com.example.Librarymanagementsystem.service.IBookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -43,5 +46,12 @@ public class BookService implements IBookService {
 
     public void removeBook(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Book> getAvailableBooks() {
+        return getAllBooks().stream().
+                filter(book -> book.getAvailability().
+                        equals(BookAvailability.AVAILABLE)).collect(Collectors.toList());
     }
 }
