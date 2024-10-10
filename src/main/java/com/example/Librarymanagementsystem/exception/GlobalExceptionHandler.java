@@ -75,4 +75,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
+    @ExceptionHandler(InvalidReservationStatusException.class)
+    public ResponseEntity<String> handleInvalidReservationStatus(InvalidReservationStatusException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateEntryException.class)
+    public ResponseEntity<String> handleDuplicateEntryException(DuplicateEntryException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
 }

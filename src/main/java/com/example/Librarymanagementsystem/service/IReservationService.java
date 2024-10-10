@@ -18,7 +18,5 @@ public interface IReservationService {
 
     Reservation updateReservationStatus(Long id, ReservationStatus status);
 
-    List<Book> getReservedBooksByUser();
-
-    List<Book> getRequestedBooksByUser();
+    List<Book> getBooksByReservationStatus(ReservationStatus status);
 }

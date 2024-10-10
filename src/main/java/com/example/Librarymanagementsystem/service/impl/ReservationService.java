@@ -8,33 +8,26 @@ import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
-import com.example.Librarymanagementsystem.data.repository.UserRepository;
 import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
 import com.example.Librarymanagementsystem.service.IReservationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final BookRepository bookRepository;
-
-    @Autowired
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, BookRepository bookRepository) {
-        this.reservationRepository = reservationRepository;
-        this.userRepository = userRepository;
-        this.bookRepository = bookRepository;
-    }
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -45,13 +38,15 @@ public class ReservationService implements IReservationService {
     }
 
     @Transactional
-    public Reservation saveReservation(ReservationRequest reservationRequest) throws Exception {
-        User userDetails = (User) SecurityContextHolder.getContext().
-                getAuthentication().getPrincipal();
+    public Reservation saveReservation(ReservationRequest reservationRequest) {
+        UserDetailsImpl userDetails = getCurrentUser();
+
         Book book = bookRepository.findById(reservationRequest.getBookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + reservationRequest.getBookId()));
+
         Reservation reservation = new Reservation();
-        reservation.setUser(userDetails);
+        User user = createUserFromUserDetails(userDetails);
+        reservation.setUser(user);
         reservation.setBook(book);
         return reservationRepository.save(reservation);
     }
@@ -70,24 +65,25 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public List<Book> getReservedBooksByUser() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().
-                getAuthentication().getPrincipal();
-        Stream<Reservation> approvedReservations = getReservationsByUserId(userDetails.getId()).stream().
-                filter(reservation -> reservation.getStatus().equals(ReservationStatus.APPROVED));
-        List <Book> reservedBooks = new ArrayList<>();
-        approvedReservations.forEach(reservation -> reservedBooks.add(reservation.getBook()));
-        return reservedBooks;
+    public List<Book> getBooksByReservationStatus(ReservationStatus status) {
+        UserDetailsImpl userDetails = getCurrentUser();
+        return getReservationsByUserId(userDetails.getId()).stream()
+                .filter(reservation -> reservation.getStatus().equals(status))
+                .map(Reservation::getBook)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public List<Book> getRequestedBooksByUser() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().
-                getAuthentication().getPrincipal();
-        Stream<Reservation> pendingReservations = getReservationsByUserId(userDetails.getId()).stream().
-                filter(reservation -> reservation.getStatus().equals(ReservationStatus.PENDING));
-        List <Book> requestedBooks = new ArrayList<>();
-        pendingReservations.forEach(reservation -> requestedBooks.add(reservation.getBook()));
-        return requestedBooks;
+    private UserDetailsImpl getCurrentUser() {
+        return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
+    private User createUserFromUserDetails(UserDetailsImpl userDetails) {
+        User user = new User();
+        user.setId(userDetails.getId());
+        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
+        return user;
+    }
+
 }

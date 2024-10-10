@@ -20,7 +20,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/reservation-manager/reservations")
+@RequestMapping("/reservations")
 @PreAuthorize("hasRole('ROLE_MANAGER')")
 @Validated
 @Tag(name = "RESERVATION MANAGER API", description = "endpoints that only reservation manager can access them")

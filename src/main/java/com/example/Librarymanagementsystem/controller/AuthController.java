@@ -12,7 +12,11 @@ import com.example.Librarymanagementsystem.payload.response.AuthenticationRespon
 import com.example.Librarymanagementsystem.payload.response.MessageResponse;
 import com.example.Librarymanagementsystem.security.jwt.JwtUtils;
 import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -32,30 +36,26 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @Validated
+@RequiredArgsConstructor
+@Tag(name = "Authentication API", description = "Endpoints for user authentication and registration")
 public class AuthController {
 
-  @Autowired
-  private AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
+  private final PasswordEncoder encoder;
+  private final JwtUtils jwtUtils;
 
-  @Autowired
-  private UserRepository userRepository;
 
-  @Autowired
-  private PasswordEncoder encoder;
-
-  @Autowired
-  private JwtUtils jwtUtils;
-
-  /**
-   * Endpoint for authenticating users.
-   *
-   * @param loginRequest The SignInRequest object containing user credentials
-   * @return ResponseEntity with AuthenticationResponse and RefreshToken if authentication is successful
-   */
   @PostMapping("/sign-in")
-  public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest) {
+  @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Successfully authenticated user"),
+          @ApiResponse(responseCode = "400", description = "Invalid email or password"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  public ResponseEntity<?> authenticateUser(@RequestBody @Valid SignInRequest loginRequest) {
     Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
     );
@@ -77,18 +77,18 @@ public class AuthController {
     ));
   }
 
-  /**
-   * Endpoint for registering new users.
-   *
-   * @param signUpRequest The SignUpRequest object containing user details
-   * @return ResponseEntity with a MessageResponse indicating successful registration
-   *         or an error message if email is already in use
-   */
-  @PostMapping("/sign-up")
-  public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
 
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+  @PostMapping("/sign-up")
+  @Operation(summary = "Register new user", description = "Registers a new user and returns a success message")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "User registered successfully"),
+          @ApiResponse(responseCode = "400", description = "Email is already in use"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  public ResponseEntity<?> registerUser(@RequestBody @Validated SignUpRequest signUpRequest) {
+
+    if (userRepository.existsByEmail(signUpRequest.getEmail()) || userRepository.existsByUsername(signUpRequest.getUsername())) {
+      return ResponseEntity.badRequest().body(new MessageResponse("Error: Email or username is already in use!"));
     }
 
     User user = new User();
@@ -104,13 +104,14 @@ public class AuthController {
     return ResponseEntity.ok(new MessageResponse("User Registered Successfully!"));
   }
 
-  /**
-   * Endpoint for logging out users.
-   *
-   * @return ResponseEntity with a MessageResponse indicating successful logout
-   */
+
   @PreAuthorize("isAuthenticated()")
   @PostMapping("/sign-out")
+  @Operation(summary = "Logout user", description = "Logs out the authenticated user and invalidates the JWT token")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Successfully logged out user"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   public ResponseEntity<?> logoutUser() {
     ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
     return ResponseEntity.ok()

@@ -62,10 +62,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.antMatchers("/").permitAll().
-                                antMatchers(HttpMethod.GET, "/api/test/**", "/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .antMatchers("/api/auth/**").permitAll()
-                                .antMatchers("/api/app/**").permitAll()
-                                .antMatchers("/api/admin/**").permitAll()
+                                antMatchers(HttpMethod.GET, "/api/test/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .antMatchers("/auth/**").permitAll()
+                                .antMatchers("/app/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

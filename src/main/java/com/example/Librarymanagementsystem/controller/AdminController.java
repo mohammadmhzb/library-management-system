@@ -22,7 +22,7 @@ import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/admin/book")
+@RequestMapping("/book")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 @Slf4j
 @Tag(name = "ADMIN API", description = "endpoints that only admin can access them")

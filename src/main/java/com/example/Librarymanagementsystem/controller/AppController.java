@@ -2,6 +2,10 @@ package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.payload.response.UserInfoResponse;
 import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,16 +21,17 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/app")
+@Tag(name = "User Profile API", description = "Endpoints for user profile management")
 public class AppController {
 
-    /**
-     * Endpoint to get the authenticated user's profile.
-     * Only accessible by authenticated users.
-     *
-     * @return ResponseEntity with UserInfoResponse containing user's profile details
-     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
+    @Operation(summary = "Get user profile", description = "Retrieves the authenticated user's profile details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved user profile"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized, user is not authenticated"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<?> getMyProfile() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
