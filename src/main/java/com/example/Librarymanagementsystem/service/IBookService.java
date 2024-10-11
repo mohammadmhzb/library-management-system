@@ -16,7 +16,7 @@ public interface IBookService {
 
     Response<List<BookResponseDTO>> getAvailableBooks();
 
-    void removeBook(Long id);
+    Response<String> removeBook(Long id);
 
 }
 

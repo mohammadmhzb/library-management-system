@@ -73,11 +73,11 @@ public class AdminController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a book", description = "Remove a book from the library by its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully deleted the book"),
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<ApiResponseSchema> deleteBook(@Parameter(description = "ID of the book to be deleted") @PathVariable Long id) {
-        bookService.removeBook(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Response<String>> deleteBook(@Parameter(description = "ID of the book to be deleted") @PathVariable Long id) {
+        return new ResponseEntity<>(bookService.removeBook(id), HttpStatus.OK);
     }
 }

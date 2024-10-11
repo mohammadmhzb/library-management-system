@@ -62,7 +62,7 @@ public class BookService implements IBookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() ->{
                     log.warn("Book with ID {} not found", id);
-                    return new ResourceNotFoundException("Book not found with ID: " + id);
+                    return new ResourceNotFoundException("Book with ID " + id + " not found.");
                 });
 
         log.info("Successfully retrieved book with ID {}: {}", id, book.getTitle());
@@ -89,8 +89,19 @@ public class BookService implements IBookService {
                 availableBooks);
     }
 
-    public void removeBook(Long id) {
+    public Response<String> removeBook(Long id) {
+        if (!bookRepository.existsById(id)) {
+            log.warn("Book with ID {} not found", id);
+            throw new ResourceNotFoundException("Book with ID " + id + " not found.");
+        }
         bookRepository.deleteById(id);
+        log.info("Book deleted successfully with ID: {}", id);
+
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Book deleted successfully with ID: " +id
+        );
     }
 
 
