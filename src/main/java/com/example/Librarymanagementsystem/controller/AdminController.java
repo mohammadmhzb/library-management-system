@@ -1,7 +1,9 @@
 package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
+import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,9 +44,8 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Book> addBook(@RequestBody @Validated Book book) {
-        LOGGER.info(book.toString());
-        return new ResponseEntity<>(bookService.addBook(book), HttpStatus.CREATED);
+    public ResponseEntity<Response<String>> createBook(@Validated @RequestBody BookRequestDTO bookRequestDTO) {
+        return new ResponseEntity<>(bookService.addBook(bookRequestDTO), HttpStatus.CREATED);
     }
 
 

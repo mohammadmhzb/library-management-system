@@ -1,6 +1,8 @@
 package com.example.Librarymanagementsystem.service;
 
 import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
+import com.example.Librarymanagementsystem.payload.response.Response;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +15,7 @@ public interface IBookService {
 
     Stream<Book> getReservableBooks();
 
-    Book addBook(Book book);
+    Response<String> addBook(BookRequestDTO book);
 
     void removeBook(Long id);
 
