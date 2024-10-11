@@ -88,8 +88,12 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(DuplicateEntryException.class)
-    public ResponseEntity<String> handleDuplicateEntryException(DuplicateEntryException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<Response<String>> handleDuplicateEntryException(DuplicateEntryException ex) {
+        Response<String> errorResponse = new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
