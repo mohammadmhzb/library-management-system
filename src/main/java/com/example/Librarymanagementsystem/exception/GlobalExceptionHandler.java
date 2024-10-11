@@ -14,6 +14,7 @@ import org.springframework.security.access.AuthorizationServiceException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -64,21 +65,27 @@ public class GlobalExceptionHandler {
         return  new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    public ResponseEntity<Response<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessages = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        Response<String> errorResponse = new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                errorMessages);
+        return  new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
 
     @ExceptionHandler(InvalidReservationStatusException.class)
     public ResponseEntity<String> handleInvalidReservationStatus(InvalidReservationStatusException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
 
     @ExceptionHandler(DuplicateEntryException.class)
     public ResponseEntity<String> handleDuplicateEntryException(DuplicateEntryException ex) {
