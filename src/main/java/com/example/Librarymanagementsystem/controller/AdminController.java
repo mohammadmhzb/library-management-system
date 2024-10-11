@@ -3,6 +3,7 @@ package com.example.Librarymanagementsystem.controller;
 import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
+import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,21 +11,18 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
-import java.util.Optional;
 
-import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/books")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 @Slf4j
 @Tag(name = "ADMIN API", description = "endpoints that only admin can access them")
@@ -55,7 +53,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<Book>> getAllBooks() {
+    public ResponseEntity<Response<List<Book>>> getAllBooks() {
         return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
@@ -64,10 +62,10 @@ public class AdminController {
     @Operation(summary = "Get one book by id", description = "Retrieve a book by its unique Id in the library" )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved a book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-
-    public ResponseEntity<Optional<Book>> getBookById(@Parameter(description = "ID of the book to be retrieved") @PathVariable Long id) {
+    public ResponseEntity<Response<BookResponseDTO>> getBookById(@Parameter(description = "ID of the book to be retrieved") @PathVariable Long id) {
         return new ResponseEntity<>(bookService.getBookById(id), HttpStatus.OK);
     }
 
