@@ -1,20 +1,26 @@
 package com.example.Librarymanagementsystem.service;
 
 import com.example.Librarymanagementsystem.data.model.Book;
-
+import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
+import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
+import com.example.Librarymanagementsystem.payload.response.Response;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface IBookService {
-    List<Book> getAllBooks();
 
-    Optional<Book> getBookById(Long id);
+    Response<String> addBook(BookRequestDTO book);
 
-    Stream<Book> getReservableBooks();
+    Response<List<Book>> getAllBooks();
 
-    Book addBook(Book book);
+    Response<BookResponseDTO> getBookById(Long id);
 
-    void removeBook(Long id);
+    Response<List<BookResponseDTO>> getAvailableBooks();
+
+    Response<String> removeBook(Long id);
+
+    Response<String> updateBook(Long id, BookRequestDTO book);
+
+    Response<String> patchBook(Long id, BookRequestDTO book);
+
 }
 

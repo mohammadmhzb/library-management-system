@@ -8,27 +8,26 @@ import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
-import com.example.Librarymanagementsystem.data.repository.UserRepository;
+import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
+import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
+import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
 import com.example.Librarymanagementsystem.service.IReservationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final BookRepository bookRepository;
-
-    @Autowired
-    public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, BookRepository bookRepository) {
-        this.reservationRepository = reservationRepository;
-        this.userRepository = userRepository;
-        this.bookRepository = bookRepository;
-    }
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -39,19 +38,16 @@ public class ReservationService implements IReservationService {
     }
 
     @Transactional
-    public Reservation saveReservation(Reservation reservation) throws Exception {
-        // Optional: Validate that the user and book exist
+    public Reservation saveReservation(ReservationRequest reservationRequest) {
+        UserDetailsImpl userDetails = getCurrentUser();
 
-        User user = userRepository.findById(reservation.getUser().getId())
-                .orElseThrow(() -> new Exception("User not found with id " + reservation.getUser().getId()));
+        Book book = bookRepository.findById(reservationRequest.getBookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + reservationRequest.getBookId()));
 
-        Book book = bookRepository.findById(reservation.getBook().getId())
-                .orElseThrow(() -> new Exception("Book not found with id " + reservation.getBook().getId()));
-
+        Reservation reservation = new Reservation();
+        User user = createUserFromUserDetails(userDetails);
         reservation.setUser(user);
         reservation.setBook(book);
-
-        // Save the reservation
         return reservationRepository.save(reservation);
     }
 
@@ -67,4 +63,27 @@ public class ReservationService implements IReservationService {
             reservation.getBook().setAvailability(BookAvailability.RESERVED);
         return reservationRepository.save(reservation);
     }
+
+    @Override
+    public List<Book> getBooksByReservationStatus(ReservationStatus status) {
+        UserDetailsImpl userDetails = getCurrentUser();
+        return getReservationsByUserId(userDetails.getId()).stream()
+                .filter(reservation -> reservation.getStatus().equals(status))
+                .map(Reservation::getBook)
+                .collect(Collectors.toList());
+    }
+
+    private UserDetailsImpl getCurrentUser() {
+        return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    private User createUserFromUserDetails(UserDetailsImpl userDetails) {
+        User user = new User();
+        user.setId(userDetails.getId());
+        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
+        return user;
+    }
+
 }

@@ -1,18 +1,22 @@
 package com.example.Librarymanagementsystem.service;
 
 import com.example.Librarymanagementsystem.data.model.User;
+import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
+import com.example.Librarymanagementsystem.payload.response.Response;
+import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IUserService {
-    List<User> getAllUsers();
+    Response<List<User>> getAllUsers();
 
-    Optional<User> getUserById(Long id);
+    Response<UserResponseDTO> getUserById(Long id);
 
-    User createUser(User user);
+    Response<String> createUser(UserRequestDTO user);
 
-    User updateUser(Long id, User userDetails);
+    Response<String> updateUser(Long id, UserRequestDTO userDetails);
 
-    void deleteUser(Long id);
+    Response<String> patchUser(Long id, UserRequestDTO userDetails);
+
+    Response<String> deleteUser(Long id);
 }
