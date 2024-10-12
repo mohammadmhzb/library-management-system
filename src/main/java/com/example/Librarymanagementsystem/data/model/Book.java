@@ -17,7 +17,7 @@ import javax.validation.constraints.Min;
 @Entity
 @Data
 @RequiredArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Table(name = "books", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
 public class Book extends DateAudit {
     private static final long serialVersionUID = 1L;

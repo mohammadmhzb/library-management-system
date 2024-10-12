@@ -6,7 +6,6 @@ import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
-import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
@@ -47,15 +46,18 @@ public class UserController {
 
     }
 
-    @GetMapping("/books")
+    @GetMapping("/books/")
     @Operation(summary = "Get available books", description = "Retrieve a list of all available books")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved available books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Response<List<BookResponseDTO>>> getAvailableBooks() {
-        return new ResponseEntity<>(bookService.getAvailableBooks(), HttpStatus.OK);
-
+    public ResponseEntity<Response<List<BookResponseDTO>>> getAvailableBooks(@Parameter(description = "get only available books or all books")
+                                                                                 @RequestParam(required = false, defaultValue = "false") boolean isAvailable) {
+        if (isAvailable)
+            return new ResponseEntity<>(bookService.getAvailableBooks(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
     @PutMapping("/books/{id}")

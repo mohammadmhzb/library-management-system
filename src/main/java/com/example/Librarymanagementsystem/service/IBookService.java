@@ -10,7 +10,7 @@ public interface IBookService {
 
     Response<String> addBook(BookRequestDTO book);
 
-    Response<List<Book>> getAllBooks();
+    Response<List<BookResponseDTO>> getAllBooks();
 
     Response<BookResponseDTO> getBookById(Long id);
 
