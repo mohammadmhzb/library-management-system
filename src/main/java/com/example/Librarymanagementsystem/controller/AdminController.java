@@ -2,10 +2,10 @@ package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
-import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.BookService;
+import com.example.Librarymanagementsystem.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/books")
+@RequestMapping("")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 @Slf4j
 @Tag(name = "ADMIN API", description = "endpoints that only admin can access them")
@@ -30,12 +30,14 @@ import java.util.List;
 public class AdminController {
 
     private final BookService bookService;
+    private final UserService userService;
 
-    public AdminController(BookService bookService) {
+    public AdminController(BookService bookService, UserService userService) {
         this.bookService = bookService;
+        this.userService = userService;
     }
 
-    @PostMapping("")
+    @PostMapping("/books")
     @Operation(summary = "Add a new book", description = "Add a new book to the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new book"),
@@ -47,7 +49,7 @@ public class AdminController {
     }
 
 
-    @GetMapping("")
+    @GetMapping("/books")
     @Operation(summary = "Get all books", description = "Retrieve a list of all books in the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books"),
@@ -58,7 +60,7 @@ public class AdminController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/books/{id}")
     @Operation(summary = "Get one book by id", description = "Retrieve a book by its unique Id in the library" )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved a book"),
@@ -70,7 +72,7 @@ public class AdminController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/books/{id}")
     @Operation(summary = "Delete a book", description = "Remove a book from the library by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the book"),
@@ -80,4 +82,28 @@ public class AdminController {
     public ResponseEntity<Response<String>> deleteBook(@Parameter(description = "ID of the book to be deleted") @PathVariable Long id) {
         return new ResponseEntity<>(bookService.removeBook(id), HttpStatus.OK);
     }
+
+
+
+//    ############ USER
+
+    @DeleteMapping("/users/{id}")
+    @Operation(summary = "Delete a user", description = "Remove a users from the system by their ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the user"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<String>> deleteUser(@Parameter(description = "ID of the user to be deleted") @PathVariable Long id) {
+        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
+
+    }
+
+
+
+
+
+
+
+
 }
