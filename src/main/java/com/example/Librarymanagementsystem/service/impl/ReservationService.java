@@ -10,15 +10,18 @@ import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
 import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
+import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
 import com.example.Librarymanagementsystem.service.IReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,16 +32,24 @@ public class ReservationService implements IReservationService {
     private final UserService userService;
     private final BookRepository bookRepository;
 
-    public List<Reservation> getAllReservations() {
-        return reservationRepository.findAll();
+    public Response<List<Reservation>> getAllReservations() {
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                reservationRepository.findAll()
+        );
     }
 
-    public List<Reservation> getReservationsByUserId(Long userId) {
-        return reservationRepository.findByUserId(userId);
+    public Response<List<Reservation>> getReservationsByUserId(Long userId) {
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                reservationRepository.findByUserId(userId)
+        );
     }
 
     @Transactional
-    public Reservation saveReservation(ReservationRequest reservationRequest) {
+    public Response<Reservation> saveReservation(ReservationRequest reservationRequest) {
         UserDetailsImpl userDetails = getCurrentUser();
 
         Book book = bookRepository.findById(reservationRequest.getBookId())
@@ -48,29 +59,49 @@ public class ReservationService implements IReservationService {
         User user = createUserFromUserDetails(userDetails);
         reservation.setUser(user);
         reservation.setBook(book);
-        return reservationRepository.save(reservation);
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.CREATED.value(),
+                reservationRepository.save(reservation)
+        );
     }
 
-    public void deleteReservation(Long id) {
+    public Response<String> deleteReservation(Long id) {
         reservationRepository.deleteById(id);
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.NO_CONTENT.value(),
+                "Reservation deleted successfully with ID: " +id
+        );
     }
 
-    public Reservation updateReservationStatus(Long id, ReservationStatus status) {
+    public Response<Reservation> updateReservationStatus(Long id, ReservationStatus status) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
         reservation.setStatus(status);
         reservation.setUpdatedAt(Instant.now());
         if(status.equals(ReservationStatus.APPROVED))
             reservation.getBook().setAvailability(BookAvailability.RESERVED);
-        return reservationRepository.save(reservation);
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                reservationRepository.save(reservation)
+        );
     }
 
     @Override
-    public List<Book> getBooksByReservationStatus(ReservationStatus status) {
+    public Response<List<Book>> getBooksByReservationStatus(ReservationStatus status) {
         UserDetailsImpl userDetails = getCurrentUser();
-        return getReservationsByUserId(userDetails.getId()).stream()
+        List<Book> message = getReservationsByUserId(userDetails.getId())
+                .getMessage().stream()
                 .filter(reservation -> reservation.getStatus().equals(status))
                 .map(Reservation::getBook)
                 .collect(Collectors.toList());
+
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                message
+        );
     }
 
     private UserDetailsImpl getCurrentUser() {

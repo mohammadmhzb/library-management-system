@@ -3,6 +3,7 @@ package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,9 +38,8 @@ public class ReservationManagerController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of reservations"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<Reservation>> getAllReservations() {
-        List<Reservation> reservations = reservationService.getAllReservations();
-        return new ResponseEntity<>(reservations, HttpStatus.OK);
+    public ResponseEntity<Response<List<Reservation>>> getAllReservations() {
+        return new ResponseEntity<>(reservationService.getAllReservations(), HttpStatus.OK);
     }
 
     @GetMapping("/{userid}")
@@ -49,8 +49,8 @@ public class ReservationManagerController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<Reservation>> getReservationsByUserId(@Parameter(description = "ID of the user to retrieve reservations for") @PathVariable String userid) {
-        List<Reservation> reservations = reservationService.getReservationsByUserId(Long.valueOf(userid));
+    public ResponseEntity<Response<List<Reservation>>> getReservationsByUserId(@Parameter(description = "ID of the user to retrieve reservations for") @PathVariable String userid) {
+        Response<List<Reservation>> reservations = reservationService.getReservationsByUserId(Long.valueOf(userid));
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
@@ -62,10 +62,10 @@ public class ReservationManagerController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Reservation> updateReservationStatus(
+    public ResponseEntity<Response<Reservation>> updateReservationStatus(
             @Parameter(description = "ID of the reservation to be updated") @PathVariable String reservationId,
             @RequestBody ReservationStatus status) {
-        Reservation updatedReservation = reservationService.updateReservationStatus(Long.valueOf(reservationId), status);
+        Response<Reservation> updatedReservation = reservationService.updateReservationStatus(Long.valueOf(reservationId), status);
         return new ResponseEntity<>(updatedReservation, HttpStatus.OK);
     }
 }
