@@ -51,13 +51,17 @@ public class BookService implements IBookService {
         );
     }
 
-    public Response<List<Book>> getAllBooks() {
+    public Response<List<BookResponseDTO>> getAllBooks() {
         List<Book> books = bookRepository.findAll();
+        List<BookResponseDTO> allBooks = books.stream()
+                .filter(book -> book.getAvailability().equals(BookAvailability.AVAILABLE))
+                .map(BookMapper::toDTO)
+                .collect(Collectors.toList());
         log.info("Retrieved {} books from the repository.", books.size());
         return new Response<>(
                 LocalDateTime.now(),
                 HttpStatus.OK.value(),
-                books
+                allBooks
         );
     }
 

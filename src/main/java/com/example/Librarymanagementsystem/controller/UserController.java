@@ -6,7 +6,6 @@ import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
-import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
@@ -47,15 +46,18 @@ public class UserController {
 
     }
 
-    @GetMapping("/books")
+    @GetMapping("/books/")
     @Operation(summary = "Get available books", description = "Retrieve a list of all available books")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved available books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Response<List<BookResponseDTO>>> getAvailableBooks() {
-        return new ResponseEntity<>(bookService.getAvailableBooks(), HttpStatus.OK);
-
+    public ResponseEntity<Response<List<BookResponseDTO>>> getAvailableBooks(@Parameter(description = "get only available books or all books")
+                                                                                 @RequestParam(required = false, defaultValue = "false") boolean isAvailable) {
+        if (isAvailable)
+            return new ResponseEntity<>(bookService.getAvailableBooks(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
     @PutMapping("/books/{id}")
@@ -94,9 +96,9 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Reservation> createReservation(
+    public ResponseEntity<Response<Reservation>> createReservation(
             @RequestBody @Validated ReservationRequest reservationRequest) {
-        Reservation newReservation = reservationService.saveReservation(reservationRequest);
+        Response<Reservation> newReservation = reservationService.saveReservation(reservationRequest);
         return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
     }
 
@@ -107,11 +109,11 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Reservation not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<ApiResponseSchema> deleteReservation(
+    public ResponseEntity<Response<String>> deleteReservation(
             @Parameter(description = "ID of the reservation to be deleted", required = true)
             @PathVariable String reservationId) {
-        reservationService.deleteReservation(Long.valueOf(reservationId));
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Response<String> message = reservationService.deleteReservation(Long.valueOf(reservationId));
+        return new ResponseEntity<>(message, HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/reservations")
@@ -121,10 +123,10 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid reservation status provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<Book>> getFilteredBooks(
+    public ResponseEntity<Response<List<Book>>> getFilteredBooks(
             @Parameter(description = "Type of reservation status (e.g., APPROVED, PENDING)", required = true)
             @RequestParam ReservationStatus type) {
-        List<Book> books = reservationService.getBooksByReservationStatus(type);
+        Response<List<Book>> books = reservationService.getBooksByReservationStatus(type);
         return ResponseEntity.ok(books);
     }
 

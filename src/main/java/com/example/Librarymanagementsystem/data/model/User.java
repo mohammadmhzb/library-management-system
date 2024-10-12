@@ -15,7 +15,7 @@ import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@NoArgsConstructor
+//@NoArgsConstructor
 @RequiredArgsConstructor
 @Data
 @Table(name = "users", uniqueConstraints = {

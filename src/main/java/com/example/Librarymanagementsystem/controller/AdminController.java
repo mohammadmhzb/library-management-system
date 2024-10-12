@@ -56,7 +56,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Response<List<Book>>> getAllBooks() {
+    public ResponseEntity<Response<List<BookResponseDTO>>> getAllBooks() {
         return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
     }
 
