@@ -6,7 +6,7 @@ import javax.validation.Valid;
 import com.example.Librarymanagementsystem.data.model.User;
 import com.example.Librarymanagementsystem.data.model.enums.UserRole;
 import com.example.Librarymanagementsystem.data.repository.UserRepository;
-import com.example.Librarymanagementsystem.payload.request.SignInRequest;
+import com.example.Librarymanagementsystem.payload.request.SignInRequestDTO;
 import com.example.Librarymanagementsystem.payload.request.SignUpRequest;
 import com.example.Librarymanagementsystem.payload.response.AuthenticationResponse;
 import com.example.Librarymanagementsystem.payload.response.MessageResponse;
@@ -55,7 +55,7 @@ public class AuthController {
           @ApiResponse(responseCode = "400", description = "Invalid email or password"),
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  public ResponseEntity<?> authenticateUser(@RequestBody @Valid SignInRequest loginRequest) {
+  public ResponseEntity<?> authenticateUser(@RequestBody @Valid SignInRequestDTO loginRequest) {
     Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
     );

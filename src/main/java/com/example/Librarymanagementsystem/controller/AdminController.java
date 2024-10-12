@@ -1,6 +1,7 @@
 package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.data.model.User;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
@@ -87,6 +88,21 @@ public class AdminController {
 
 //    ############ USER
 
+
+
+    @GetMapping("/users")
+    @Operation(summary = "Get all users", description = "Retrieve a list of all users in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public  ResponseEntity<Response<List<User>>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+
+
+
     @DeleteMapping("/users/{id}")
     @Operation(summary = "Delete a user", description = "Remove a users from the system by their ID")
     @ApiResponses(value = {
@@ -98,12 +114,5 @@ public class AdminController {
         return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
 
     }
-
-
-
-
-
-
-
 
 }

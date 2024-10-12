@@ -7,8 +7,10 @@ import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
+import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
 import com.example.Librarymanagementsystem.service.impl.BookService;
 import com.example.Librarymanagementsystem.service.impl.ReservationService;
+import com.example.Librarymanagementsystem.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,10 +35,14 @@ public class UserController {
 
     private final BookService bookService;
     private final ReservationService reservationService;
+    private final UserService userService;
 
-    public UserController(BookService bookService, ReservationService reservationService) {
+
+    public UserController(BookService bookService, ReservationService reservationService, UserService userService) {
         this.bookService = bookService;
         this.reservationService = reservationService;
+        this.userService = userService;
+
     }
 
     @GetMapping("/books")
@@ -90,4 +96,20 @@ public class UserController {
         List<Book> books = reservationService.getBooksByReservationStatus(type);
         return ResponseEntity.ok(books);
     }
+
+//    ############ USER
+
+    @GetMapping("users/{id}")
+    @Operation(summary = "Get one user by ID", description = "Retrieve a user by their unique ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved user"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<UserResponseDTO>> getUserById(@Parameter(description = "ID of the user to be retrieved") @PathVariable Long id) {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+
+    }
+
+
 }
