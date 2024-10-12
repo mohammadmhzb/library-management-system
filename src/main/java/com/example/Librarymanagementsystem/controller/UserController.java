@@ -3,7 +3,9 @@ package com.example.Librarymanagementsystem.controller;
 import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
+import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.ApiResponseSchema;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
@@ -55,6 +57,35 @@ public class UserController {
         return new ResponseEntity<>(bookService.getAvailableBooks(), HttpStatus.OK);
 
     }
+
+    @PutMapping("/books/{id}")
+    @Operation(summary = "Update a book (PUT)", description = "Update all fields of an existing book by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<String>> updateBook(@Validated @RequestBody BookRequestDTO bookRequestDTO,
+                                                       @Parameter(description = "ID of the book to be updated")
+                                                       @PathVariable Long id){
+        return new ResponseEntity<>(bookService.updateBook(id, bookRequestDTO), HttpStatus.OK);
+    }
+
+    @PatchMapping("/books/{id}")
+    @Operation(summary = "Update specific fields of a book (PATCH)", description = "Update specific fields of an existing book by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<String>> patchBook(@Validated @RequestBody BookRequestDTO bookRequestDTO,
+                                                      @Parameter(description = "ID of the book to be updated")
+                                                      @PathVariable Long id){
+        return new ResponseEntity<>(bookService.patchBook(id, bookRequestDTO), HttpStatus.OK);
+    }
+
 
     @PostMapping("/reservations")
     @Operation(summary = "Create a new reservation", description = "Add a new reservation for a book")
@@ -111,5 +142,32 @@ public class UserController {
 
     }
 
+    @PutMapping("/users/{id}")
+    @Operation(summary = "Update a user (PUT)", description = "Update all fields of an existing user by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the user"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<String>> updateUser(@Validated @RequestBody UserRequestDTO userRequestDTO,
+                                                       @Parameter(description = "ID of the user to be updated")
+                                                       @PathVariable Long id){
+        return new ResponseEntity<>(userService.updateUser(id, userRequestDTO), HttpStatus.OK);
+    }
+
+    @PatchMapping("/users/{id}")
+    @Operation(summary = "Update specific fields of a user (PATCH)", description = "Update specific fields of an existing user by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated the user"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<String>> patchUser(@Validated @RequestBody UserRequestDTO userRequestDTO,
+                                                      @Parameter(description = "ID of the user to be updated")
+                                                      @PathVariable Long id){
+        return new ResponseEntity<>(userService.patchUser(id, userRequestDTO), HttpStatus.OK);
+    }
 
 }

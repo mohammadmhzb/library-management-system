@@ -102,7 +102,6 @@ public class AdminController {
 
 
 
-
     @DeleteMapping("/users/{id}")
     @Operation(summary = "Delete a user", description = "Remove a users from the system by their ID")
     @ApiResponses(value = {

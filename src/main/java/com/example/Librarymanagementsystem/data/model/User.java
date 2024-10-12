@@ -35,35 +35,30 @@ public class User extends DateAudit {
     @Column(name = "first_name")
     @Max(30)
     @Schema(description = "First name of the user", example = "John")
-    @NonNull
     private String firstName;
 
     @NotBlank
     @Column(name = "last_name")
     @Max(30)
     @Schema(description = "Last name of the user", example = "Doe")
-    @NonNull
     private String lastName;
 
     @NotBlank
     @Column(name = "username")
     @Max(15)
     @Schema(description = "Username of the user", example = "johndoe")
-    @NonNull
     private String username;
 
     @NotBlank
     @Size(max = 6, min = 6)
     @Column(name = "password")
     @Schema(description = "Password for the user account", example = "password123")
-    @NonNull
     private String password;
 
     @NotBlank
     @Max(11)
     @Column(name = "phone_number")
     @Schema(description = "Phone number of the user", example = "09150835353")
-    @NonNull
     private String phoneNumber;
 
     @NotBlank
@@ -72,7 +67,6 @@ public class User extends DateAudit {
     @Column(name = "email")
     @Email
     @Schema(description = "Email address of the user", example = "john.doe@example.com")
-    @NonNull
     private String email;
 
     @Column(name = "role")

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -78,13 +79,78 @@ public class UserService implements IUserService {
         );
     }
 
-    public User updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setUsername(userDetails.getUsername());
-        user.setPassword(userDetails.getPassword());
-        user.setEmail(userDetails.getEmail());
-        user.setUpdatedAt(Instant.now());
-        return userRepository.save(user);
+    public Response<String> updateUser(Long id, UserRequestDTO userRequestDTO) {
+
+        if (!userRepository.existsById(id)) {
+            log.warn("User with ID {} not found", id);
+            throw new ResourceNotFoundException("User with ID " + id + " not found.");
+        }
+
+        User userDetails = UserMapper.toEntity(userRequestDTO);
+
+        Optional<User> updatedUser= userRepository.findById(id).map(existingUser -> {
+            existingUser.setFirstName(userDetails.getFirstName());
+            existingUser.setLastName(userDetails.getLastName());
+            existingUser.setUsername(userDetails.getUsername());
+            existingUser.setPhoneNumber(userDetails.getPhoneNumber());
+            existingUser.setPassword(userDetails.getPassword());
+            existingUser.setEmail(userDetails.getEmail());
+            existingUser.setRole(userDetails.getRole());
+            existingUser.setUpdatedAt(Instant.now());
+            return userRepository.save(existingUser);
+        });
+
+        log.info("User updated successfully: {}", updatedUser.get());
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "User updated successfully with ID " + id
+        );
+    }
+
+    public Response<String> patchUser(Long id, UserRequestDTO userRequestDTO) {
+
+        if (!userRepository.existsById(id)) {
+            log.warn("User with ID {} not found", id);
+            throw new ResourceNotFoundException("User with ID " + id + " not found.");
+        }
+
+        User userDetails = UserMapper.toEntity(userRequestDTO);
+
+        Optional<User> updatedUser = userRepository.findById(id).map(existingUser -> {
+            if (userDetails.getFirstName() != null) {
+                existingUser.setFirstName(userDetails.getFirstName());
+            }
+            if (userDetails.getLastName() != null) {
+                existingUser.setLastName(userDetails.getLastName());
+            }
+            if (userDetails.getUsername() != null) {
+                existingUser.setUsername(userDetails.getUsername());
+            }
+            if (userDetails.getPhoneNumber() != null) {
+                existingUser.setPhoneNumber(userDetails.getPhoneNumber());
+            }
+            if (userDetails.getPassword() != null) {
+                existingUser.setPassword(userDetails.getPassword());
+            }
+            if (userDetails.getEmail() != null) {
+                existingUser.setEmail(userDetails.getEmail());
+            }
+            if (userDetails.getRole() != null) {
+                existingUser.setRole(userDetails.getRole());
+            }
+            existingUser.setUpdatedAt(Instant.now());
+
+            return userRepository.save(existingUser);
+        });
+
+        log.info("User patched successfully: {}", updatedUser.get());
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "User updated successfully with ID " + id
+        );
+
     }
 
     public Response<String> deleteUser(Long id) {

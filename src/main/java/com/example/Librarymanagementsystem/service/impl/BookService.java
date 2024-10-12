@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -104,7 +106,7 @@ public class BookService implements IBookService {
         );
     }
 
-    public Response<String> updateBook(Long id, BookRequestDTO bookRequestDTO) throws ResourceNotFoundException {
+    public Response<String> updateBook(Long id, BookRequestDTO bookRequestDTO) {
 
         if (!bookRepository.existsById(id)) {
             log.warn("Book with ID {} not found", id);
@@ -121,6 +123,7 @@ public class BookService implements IBookService {
             existingBook.setGenre(bookDetails.getGenre());
             existingBook.setLanguage(bookDetails.getLanguage());
             existingBook.setAvailability(bookDetails.getAvailability());
+            existingBook.setUpdatedAt(Instant.now());
             return bookRepository.save(existingBook);
         });
 
@@ -161,6 +164,8 @@ public class BookService implements IBookService {
             if (bookDetails.getAvailability() != null) {
                 existingBook.setAvailability(bookDetails.getAvailability());
             }
+            existingBook.setUpdatedAt(Instant.now());
+
             return bookRepository.save(existingBook);
         });
 

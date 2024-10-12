@@ -6,7 +6,6 @@ import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IUserService {
     Response<List<User>> getAllUsers();
@@ -15,7 +14,9 @@ public interface IUserService {
 
     Response<String> createUser(UserRequestDTO user);
 
-    User updateUser(Long id, User userDetails);
+    Response<String> updateUser(Long id, UserRequestDTO userDetails);
+
+    Response<String> patchUser(Long id, UserRequestDTO userDetails);
 
     Response<String> deleteUser(Long id);
 }
