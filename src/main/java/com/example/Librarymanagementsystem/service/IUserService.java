@@ -1,6 +1,7 @@
 package com.example.Librarymanagementsystem.service;
 
 import com.example.Librarymanagementsystem.data.model.User;
+import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
 
@@ -12,7 +13,7 @@ public interface IUserService {
 
     Response<UserResponseDTO> getUserById(Long id);
 
-    User createUser(User user);
+    Response<String> createUser(UserRequestDTO user);
 
     User updateUser(Long id, User userDetails);
 

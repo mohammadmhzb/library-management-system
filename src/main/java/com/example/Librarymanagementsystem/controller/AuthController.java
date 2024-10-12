@@ -3,21 +3,21 @@ package com.example.Librarymanagementsystem.controller;
 
 import javax.validation.Valid;
 
-import com.example.Librarymanagementsystem.data.model.User;
-import com.example.Librarymanagementsystem.data.model.enums.UserRole;
-import com.example.Librarymanagementsystem.data.repository.UserRepository;
 import com.example.Librarymanagementsystem.payload.request.SignInRequestDTO;
-import com.example.Librarymanagementsystem.payload.request.SignUpRequest;
+import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.AuthenticationResponse;
 import com.example.Librarymanagementsystem.payload.response.MessageResponse;
+import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.security.jwt.JwtUtils;
 import com.example.Librarymanagementsystem.security.services.UserDetailsImpl;
+import com.example.Librarymanagementsystem.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +26,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,9 +42,8 @@ import java.util.stream.Collectors;
 public class AuthController {
 
   private final AuthenticationManager authenticationManager;
-  private final UserRepository userRepository;
-  private final PasswordEncoder encoder;
   private final JwtUtils jwtUtils;
+  private final UserService userService;
 
 
   @PostMapping("/sign-in")
@@ -81,27 +79,13 @@ public class AuthController {
   @PostMapping("/sign-up")
   @Operation(summary = "Register new user", description = "Registers a new user and returns a success message")
   @ApiResponses(value = {
-          @ApiResponse(responseCode = "200", description = "User registered successfully"),
+          @ApiResponse(responseCode = "201", description = "User registered successfully"),
           @ApiResponse(responseCode = "400", description = "Email is already in use"),
           @ApiResponse(responseCode = "500", description = "Internal server error")
   })
-  public ResponseEntity<?> registerUser(@RequestBody @Validated SignUpRequest signUpRequest) {
-
-    if (userRepository.existsByEmail(signUpRequest.getEmail()) || userRepository.existsByUsername(signUpRequest.getUsername())) {
-      return ResponseEntity.badRequest().body(new MessageResponse("Error: Email or username is already in use!"));
-    }
-
-    User user = new User();
-    user.setEmail(signUpRequest.getEmail());
-    user.setPassword(encoder.encode(signUpRequest.getPassword()));
-    user.setRole(UserRole.valueOf(signUpRequest.getRole().toUpperCase()));
-    user.setFirstName(signUpRequest.getFirstName());
-    user.setLastName(signUpRequest.getLastName());
-    user.setUsername(signUpRequest.getUsername());
-
-    userRepository.save(user);
-
-    return ResponseEntity.ok(new MessageResponse("User Registered Successfully!"));
+  public ResponseEntity<Response<String>> registerUser(@RequestBody @Validated UserRequestDTO userRequestDTO) {
+    Response<String> response = userService.createUser(userRequestDTO);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
 
