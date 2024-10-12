@@ -31,6 +31,26 @@ public class UserService implements IUserService {
         this.userRepository = userRepository;
     }
 
+    public Response<String> createUser(UserRequestDTO userRequestDTO) {
+
+        User user = UserMapper.toEntity(userRequestDTO);
+
+        if (userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())) {
+            log.warn("Attempted to add a duplicate user: {} {}", user.getFirstName(), user.getLastName());
+            throw new DuplicateEntryException("User already exists with the same username or email");
+        }
+
+        log.info("Saving user: {}", user);
+        userRepository.save(user);
+
+        String message = "user added successfully: " + user.getFirstName() + " " + user.getLastName();
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.CREATED.value(),
+                message
+        );
+    }
+
     public Response<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
         log.info("Retrieved {} users from the repository.", users.size());
@@ -55,26 +75,6 @@ public class UserService implements IUserService {
                 LocalDateTime.now(),
                 HttpStatus.OK.value(),
                 UserMapper.toDTO(user)
-        );
-    }
-
-    public Response<String> createUser(UserRequestDTO userRequestDTO) {
-
-        User user = UserMapper.toEntity(userRequestDTO);
-
-        if (userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())) {
-            log.warn("Attempted to add a duplicate user: {} {}", user.getFirstName(), user.getLastName());
-            throw new DuplicateEntryException("User already exists with the same username or email");
-        }
-
-        log.info("Saving user: {}", user);
-        userRepository.save(user);
-
-        String message = "user added successfully: " + user.getFirstName() + " " + user.getLastName();
-        return new Response<>(
-                LocalDateTime.now(),
-                HttpStatus.CREATED.value(),
-                message
         );
     }
 

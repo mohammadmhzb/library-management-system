@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -73,7 +74,6 @@ public class BookService implements IBookService {
         );
     }
 
-    @Override
     public Response<List<BookResponseDTO>> getAvailableBooks() {
         List<Book> books = bookRepository.findAll();
         List<BookResponseDTO> availableBooks = books.stream()
@@ -102,6 +102,75 @@ public class BookService implements IBookService {
                 HttpStatus.OK.value(),
                 "Book deleted successfully with ID: " +id
         );
+    }
+
+    public Response<String> updateBook(Long id, BookRequestDTO bookRequestDTO) throws ResourceNotFoundException {
+
+        if (!bookRepository.existsById(id)) {
+            log.warn("Book with ID {} not found", id);
+            throw new ResourceNotFoundException("Book with ID " + id + " not found.");
+        }
+
+        Book bookDetails = BookMapper.toEntity(bookRequestDTO);
+
+
+        Optional<Book> updatedBook = bookRepository.findById(id).map(existingBook -> {
+            existingBook.setTitle(bookDetails.getTitle());
+            existingBook.setAuthor(bookDetails.getAuthor());
+            existingBook.setPages(bookDetails.getPages());
+            existingBook.setGenre(bookDetails.getGenre());
+            existingBook.setLanguage(bookDetails.getLanguage());
+            existingBook.setAvailability(bookDetails.getAvailability());
+            return bookRepository.save(existingBook);
+        });
+
+        log.info("Book updated successfully: {}", updatedBook.get());
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Book updated successfully with ID " + id
+        );
+    }
+
+    public Response<String> patchBook(Long id, BookRequestDTO bookRequestDTO) {
+
+        if (!bookRepository.existsById(id)) {
+            log.warn("Book with ID {} not found", id);
+            throw new ResourceNotFoundException("Book with ID " + id + " not found.");
+        }
+
+        Book bookDetails = BookMapper.toEntity(bookRequestDTO);
+
+
+        Optional<Book> updatedBook = bookRepository.findById(id).map(existingBook -> {
+            if (bookDetails.getTitle() != null) {
+                existingBook.setTitle(bookDetails.getTitle());
+            }
+            if (bookDetails.getAuthor() != null) {
+                existingBook.setAuthor(bookDetails.getAuthor());
+            }
+            if (bookDetails.getPages() > 0) {
+                existingBook.setPages(bookDetails.getPages());
+            }
+            if (bookDetails.getGenre() != null) {
+                existingBook.setGenre(bookDetails.getGenre());
+            }
+            if (bookDetails.getLanguage() != null) {
+                existingBook.setLanguage(bookDetails.getLanguage());
+            }
+            if (bookDetails.getAvailability() != null) {
+                existingBook.setAvailability(bookDetails.getAvailability());
+            }
+            return bookRepository.save(existingBook);
+        });
+
+        log.info("Book patched successfully: {}", updatedBook.get());
+        return new Response<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Book updated successfully with ID " + id
+        );
+
     }
 
 

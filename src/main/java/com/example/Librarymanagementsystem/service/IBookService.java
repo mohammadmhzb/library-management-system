@@ -18,5 +18,9 @@ public interface IBookService {
 
     Response<String> removeBook(Long id);
 
+    Response<String> updateBook(Long id, BookRequestDTO book);
+
+    Response<String> patchBook(Long id, BookRequestDTO book);
+
 }
 
