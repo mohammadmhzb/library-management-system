@@ -1,4 +1,5 @@
 package com.example.Librarymanagementsystem.data.model;
+
 import com.example.Librarymanagementsystem.data.model.audit.DateAudit;
 import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
 import com.example.Librarymanagementsystem.data.model.enums.BookGenre;
@@ -6,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
+import lombok.RequiredArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Min;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Min;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name = "books", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
 public class Book extends DateAudit {

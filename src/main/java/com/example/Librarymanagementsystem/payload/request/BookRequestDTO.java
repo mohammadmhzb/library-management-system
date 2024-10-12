@@ -9,7 +9,6 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -27,11 +26,12 @@ public class BookRequestDTO {
     @Size(max = 30, message = "Author name length should not exceed 30 characters")
     private String author;
 
+    @NotBlank(message = "Page cannot be blank")
     @Min(value = 1, message = "Pages must be a positive number")
     @Max(value = 10000, message = "Page count cannot exceed 10000 pages")
     private int pages;
 
-    @NotNull(message = "Genre cannot be null")
+    @NotBlank(message = "Genre cannot be blank")
     @Enumerated(EnumType.STRING)
     private BookGenre genre;
 
