@@ -1,6 +1,5 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
@@ -19,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -41,6 +38,7 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<String>> createBook(@Validated @RequestBody BookRequestDTO bookRequestDTO) {
         return new ResponseEntity<>(bookService.addBook(bookRequestDTO), HttpStatus.CREATED);
     }
@@ -80,6 +78,7 @@ public class BookController {
             @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<String>> deleteBook(@Parameter(description = "ID of the book to be deleted") @PathVariable Long id) {
         return new ResponseEntity<>(bookService.removeBook(id), HttpStatus.OK);
     }
@@ -93,6 +92,7 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<String>> updateBook(@Validated @RequestBody BookRequestDTO bookRequestDTO,
                                                        @Parameter(description = "ID of the book to be updated")
                                                        @PathVariable Long id) {
@@ -107,24 +107,10 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<String>> patchBook(@Validated @RequestBody BookRequestDTO bookRequestDTO,
                                                       @Parameter(description = "ID of the book to be updated")
                                                       @PathVariable Long id) {
         return new ResponseEntity<>(bookService.patchBook(id, bookRequestDTO), HttpStatus.OK);
     }
-
-//    @GetMapping("/")
-//    @Operation(summary = "Get filtered books by reservation status", description = "Retrieve a list of books based on their reservation status")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Successfully retrieved books based on reservation status"),
-//            @ApiResponse(responseCode = "400", description = "Invalid reservation status provided"),
-//            @ApiResponse(responseCode = "500", description = "Internal server error")
-//    })
-//    @PreAuthorize("hasRole('ROLE_USER')")
-//    public ResponseEntity<Response<List<Book>>> getFilteredBooks(
-//            @Parameter(description = "Type of reservation status (e.g., APPROVED, PENDING)", required = true)
-//            @RequestParam ReservationStatus type) {
-//        Response<List<Book>> books = reservationService.getBooksByReservationStatus(type);
-//        return ResponseEntity.ok(books);
-//    }
 }

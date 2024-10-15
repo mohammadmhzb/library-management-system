@@ -1,6 +1,5 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
@@ -24,7 +23,6 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/reservations")
-//@PreAuthorize("hasRole('ROLE_MANAGER')")
 @Validated
 @Tag(name = "RESERVATION API", description = "CRUD operations for reservations")
 public class ReservationController {
@@ -36,6 +34,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of reservations"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<Response<List<Reservation>>> getAllReservations() {
         return new ResponseEntity<>(reservationService.getAllReservations(), HttpStatus.OK);
     }
@@ -47,6 +46,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<Response<List<Reservation>>> getReservationsByUserId(@Parameter(description = "ID of the user to retrieve reservations for") @PathVariable String userid) {
         Response<List<Reservation>> reservations = reservationService.getReservationsByUserId(Long.valueOf(userid));
         return new ResponseEntity<>(reservations, HttpStatus.OK);
@@ -60,6 +60,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
     public ResponseEntity<Response<Reservation>> updateReservationStatus(
             @Parameter(description = "ID of the reservation to be updated") @PathVariable String reservationId,
             @RequestBody ReservationStatus status) {

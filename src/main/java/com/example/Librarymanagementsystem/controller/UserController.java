@@ -36,6 +36,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<UserResponseDTO>> getUserById(@Parameter(description = "ID of the user to be retrieved") @PathVariable Long id) {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
 
@@ -75,6 +76,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public  ResponseEntity<Response<List<User>>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
