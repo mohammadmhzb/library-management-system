@@ -8,60 +8,97 @@ The project is organized into the following files and folders:
 
 ```
 library-management-system/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/
-│   │   │       └── example/
-│   │   │           └── librarymanagementsystem/
-│   │   │               ├── LibraryManagementSystemApplication.java
-│   │   │               ├── config/
-│   │   │               │   └── AppConfig.java
-|   |   |               |   └── OpenApiConfig.java
-│   │   │               ├── controller/
-│   │   │               │   ├── AdminController.java
-│   │   │               │   └── ReservationManagerController.java
-│   │   │               │   └── UserController.java
-│   │   │               ├── service/
-│   │   │               │   ├── BookService.java
-│   │   │               │   ├── UserService.java
-│   │   │               │   └── ReservationService.java
-│   │   │               ├── repository/
-│   │   │               │   ├── BookRepository.java
-│   │   │               │   └── ReservationRepository.java
-│   │   │               ├── model/
-│   │   │               │   ├── Book.java
-│   │   │               │   ├── RegularUser.java
-│   │   │               │   ├── Reservation.java
-│   │   │               │   ├── SystemAdmin.java
-│   │   │               │   └── User.java
-│   │   │               ├── enums/
-│   │   │               │   ├── BookAvailability.java
-│   │   │               │   ├── BookGenre.java
-│   │   │               │   ├── ReservationStatus.java
-│   │   │               │   └── UserRole.java
-│   │   │               └── exception/
-│   │   │                   └── ResourceNotFoundException.java
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── static/
-│   │           └── (static files like CSS, JS, images)
-│   │       └── templates/
-│   │           └── (Thymeleaf templates if using)
-│   └── test/
-│       └── java/
-│           └── com/
-│               └── example/
-│                   └── librarymanagementsystem/
-│                       ├── LibraryManagementSystemApplicationTests.java
-│                       ├── controller/
-│                       │   ├── BookControllerTest.java
-│                       │   └── UserControllerTest.java
-│                       └── service/
-│                           ├── BookServiceTest.java
-│                           └── UserServiceTest.java
+.
+├── HELP.md
 ├── README.md
-└── .gitignore
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+├── src
+│  ├── main
+│  │  ├── java
+│  │  │  └── com
+│  │  │      └── example
+│  │  │          └── Librarymanagementsystem
+│  │  │              ├── LibraryManagementSystemApplication.java
+│  │  │              ├── config
+│  │  │              │  ├── AppConfig.java
+│  │  │              │  └── OpenApiConfig.java
+│  │  │              ├── controller
+│  │  │              │  ├── BookController.java
+│  │  │              │  ├── AppController.java
+│  │  │              │  ├── AuthController.java
+│  │  │              │  ├── ReservationController.java
+│  │  │              │  └── UserController.java
+│  │  │              ├── data
+│  │  │              │  ├── model
+│  │  │              │  │  ├── Book.java
+│  │  │              │  │  ├── Reservation.java
+│  │  │              │  │  ├── User.java
+│  │  │              │  │  ├── audit
+│  │  │              │  │  │  └── DateAudit.java
+│  │  │              │  │  └── enums
+│  │  │              │  │      ├── BookAvailability.java
+│  │  │              │  │      ├── BookGenre.java
+│  │  │              │  │      ├── ReservationStatus.java
+│  │  │              │  │      └── UserRole.java
+│  │  │              │  └── repository
+│  │  │              │      ├── BookRepository.java
+│  │  │              │      ├── ReservationRepository.java
+│  │  │              │      └── UserRepository.java
+│  │  │              ├── exception
+│  │  │              │  ├── DuplicateEntryException.java
+│  │  │              │  ├── GlobalExceptionHandler.java
+│  │  │              │  ├── InvalidReservationStatusException.java
+│  │  │              │  └── ResourceNotFoundException.java
+│  │  │              ├── payload
+│  │  │              │  ├── mapper
+│  │  │              │  │  ├── BookMapper.java
+│  │  │              │  │  └── UserMapper.java
+│  │  │              │  ├── request
+│  │  │              │  │  ├── BookRequestDTO.java
+│  │  │              │  │  ├── ReservationRequest.java
+│  │  │              │  │  ├── SignInRequestDTO.java
+│  │  │              │  │  ├── SignUpRequest.java
+│  │  │              │  │  └── UserRequestDTO.java
+│  │  │              │  └── response
+│  │  │              │      ├── ApiResponseSchema.java
+│  │  │              │      ├── AuthenticationResponse.java
+│  │  │              │      ├── BookResponseDTO.java
+│  │  │              │      ├── MessageResponse.java
+│  │  │              │      ├── Response.java
+│  │  │              │      ├── UserInfoResponse.java
+│  │  │              │      └── UserResponseDTO.java
+│  │  │              ├── security
+│  │  │              │  ├── WebSecurityConfig.java
+│  │  │              │  ├── jwt
+│  │  │              │  │  ├── AuthEntryPointJwt.java
+│  │  │              │  │  ├── AuthTokenFilter.java
+│  │  │              │  │  └── JwtUtils.java
+│  │  │              │  └── services
+│  │  │              │      ├── UserDetailsImpl.java
+│  │  │              │      └── UserDetailsServiceImpl.java
+│  │  │              ├── service
+│  │  │              │  ├── IBookService.java
+│  │  │              │  ├── IReservationService.java
+│  │  │              │  ├── IUserService.java
+│  │  │              │  └── impl
+│  │  │              │      ├── BookService.java
+│  │  │              │      ├── ReservationService.java
+│  │  │              │      └── UserService.java
+│  │  │              └── util
+│  │  │                  └── Utils.java
+│  │  └── resources
+│  │      ├── application.properties
+│  │      ├── static
+│  │      └── user.sql
+│  └── test
+│      └── java
+│          └── com
+│              └── example
+│                  └── Librarymanagementsystem
+│                      ├── LibraryManagementSystemApplicationTests.java
+│                      └── TestObjects.java
 ```
 
 ## How to Run and Use the Project

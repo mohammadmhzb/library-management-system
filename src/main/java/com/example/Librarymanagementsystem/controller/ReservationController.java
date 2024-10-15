@@ -1,8 +1,9 @@
 package com.example.Librarymanagementsystem.controller;
 
-
+import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,19 +20,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/reservations")
-@PreAuthorize("hasRole('ROLE_MANAGER')")
+//@PreAuthorize("hasRole('ROLE_MANAGER')")
 @Validated
-@Tag(name = "RESERVATION MANAGER API", description = "endpoints that only reservation manager can access them")
-public class ReservationManagerController {
-
+@Tag(name = "RESERVATION API", description = "CRUD operations for reservations")
+public class ReservationController {
     private final ReservationService reservationService;
-
-    public ReservationManagerController(ReservationService reservationService) {
-        this.reservationService = reservationService;
-    }
 
     @GetMapping("/")
     @Operation(summary = "Get all reservations", description = "Retrieve a list of all reservations")
@@ -67,5 +65,32 @@ public class ReservationManagerController {
             @RequestBody ReservationStatus status) {
         Response<Reservation> updatedReservation = reservationService.updateReservationStatus(Long.valueOf(reservationId), status);
         return new ResponseEntity<>(updatedReservation, HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    @Operation(summary = "Create a new reservation", description = "Add a new reservation for a book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully created a new reservation"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<Reservation>> createReservation(
+            @RequestBody @Validated ReservationRequest reservationRequest) {
+        Response<Reservation> newReservation = reservationService.saveReservation(reservationRequest);
+        return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{reservationId}")
+    @Operation(summary = "Delete a reservation", description = "Remove a reservation by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted the reservation"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Response<String>> deleteReservation(
+            @Parameter(description = "ID of the reservation to be deleted", required = true)
+            @PathVariable String reservationId) {
+        Response<String> message = reservationService.deleteReservation(Long.valueOf(reservationId));
+        return new ResponseEntity<>(message, HttpStatus.NO_CONTENT);
     }
 }
