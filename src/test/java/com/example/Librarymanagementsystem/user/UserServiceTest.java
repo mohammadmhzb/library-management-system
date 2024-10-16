@@ -124,4 +124,30 @@ class UserServiceTest {
         verify(userRepository, times(1)).findById(1L);
     }
 
+
+    @Test
+    void deleteUser_ShouldDeleteUser_WhenUserExists() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+
+        Response<String> response = userService.deleteUser(1L);
+
+        assertNotNull(response);
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals("User deleted successfully with ID: 1", response.getMessage());
+        verify(userRepository, times(1)).deleteById(1L);
+    }
+
+
+    @Test
+    void deleteUser_ShouldThrowResourceNotFoundException_WhenUserDoesNotExist() {
+        when(userRepository.existsById(1L)).thenReturn(false);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.deleteUser(1L);
+        });
+
+        assertEquals("User with ID 1 not found.", exception.getMessage());
+        verify(userRepository, never()).deleteById(1L);
+    }
 }
