@@ -20,7 +20,7 @@ public class UserMapper {
     }
 
     static {
-        passwordEncoder = new BCryptPasswordEncoder(); // Replace with your actual PasswordEncoder implementation
+        passwordEncoder = new BCryptPasswordEncoder();
     }
 
     public static User toEntity(UserRequestDTO userDTO) {
