@@ -33,6 +33,7 @@ public class UserController {
     @Operation(summary = "Get one user by ID", description = "Retrieve a user by their unique ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved user"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
@@ -46,6 +47,7 @@ public class UserController {
     @Operation(summary = "Update a user (PUT)", description = "Update all fields of an existing user by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the user"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
@@ -60,6 +62,7 @@ public class UserController {
     @Operation(summary = "Update specific fields of a user (PATCH)", description = "Update specific fields of an existing user by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the user"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
@@ -74,6 +77,7 @@ public class UserController {
     @Operation(summary = "Get all users", description = "Retrieve a list of all users in the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -88,6 +92,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the user"),
             @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Response<String>> deleteUser(@Parameter(description = "ID of the user to be deleted") @PathVariable Long id) {

@@ -4,6 +4,7 @@ import com.example.Librarymanagementsystem.data.model.User;
 import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,10 @@ public class UserMapper {
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         UserMapper.passwordEncoder = passwordEncoder;
+    }
+
+    static {
+        passwordEncoder = new BCryptPasswordEncoder(); // Replace with your actual PasswordEncoder implementation
     }
 
     public static User toEntity(UserRequestDTO userDTO) {

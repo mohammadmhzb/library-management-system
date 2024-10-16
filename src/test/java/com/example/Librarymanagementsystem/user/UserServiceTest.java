@@ -56,6 +56,7 @@ class UserServiceTest {
 
     }
 
+
     @Test
     void addUser_ShouldSaveUser_WhenUserIsNew() {
         when(userRepository.findByUsername(user1.getUsername())).thenReturn(null);
@@ -149,5 +150,68 @@ class UserServiceTest {
 
         assertEquals("User with ID 1 not found.", exception.getMessage());
         verify(userRepository, never()).deleteById(1L);
+    }
+
+
+    @Test
+    void updateUser_ShouldUpdateUser_WhenUserExists() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.save(any(User.class))).thenReturn(user1);
+
+        Response<String> response = userService.updateUser(1L, userRequestDTO1);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals("User updated successfully with ID 1", response.getMessage());
+        verify(userRepository, times(1)).save(any(User.class));
+
+    }
+
+
+    @Test
+    void updateUser_ShouldThrowResourceNotFoundException_WhenUserDoesNotExist() {
+        when(userRepository.existsById(1L)).thenReturn(false);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.updateUser(1L, userRequestDTO1);
+        });
+
+        assertEquals("User with ID 1 not found.", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+
+    @Test
+    void patchUser_ShouldPatchUser_WhenUserExists() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.save(any(User.class))).thenReturn(user1);
+
+        Response<String> response = userService.patchUser(1L, userRequestDTO1);
+
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals("User updated successfully with ID 1", response.getMessage());
+
+        assertEquals("John", user1.getFirstName());
+        assertEquals("Doe", user1.getLastName());
+        assertEquals("johndoe", user1.getUsername());
+        assertEquals("01234567891", user1.getPhoneNumber());
+        assertEquals("john.doe@example.com", user1.getEmail());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+
+    @Test
+    void patchUser_ShouldThrowResourceNotFoundException_WhenUserDoesNotExist() {
+        when(userRepository.existsById(1L)).thenReturn(false);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.patchUser(1L, userRequestDTO1);
+        });
+
+        assertEquals("User with ID 1 not found.", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
     }
 }
