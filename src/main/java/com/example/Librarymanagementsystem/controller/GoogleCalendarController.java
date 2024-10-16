@@ -1,6 +1,6 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.service.GoogleCalendarService;
+import com.example.Librarymanagementsystem.service.impl.GoogleCalendarService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +15,7 @@ public class GoogleCalendarController {
     @Autowired
     private GoogleCalendarService googleCalendarService;
 
+    @Getter
     private String accessToken;
 
     @GetMapping("/authorize")
