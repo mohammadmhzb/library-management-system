@@ -5,10 +5,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import com.example.Librarymanagementsystem.data.model.User;
 import com.example.Librarymanagementsystem.exception.DuplicateEntryException;
+import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
 import com.example.Librarymanagementsystem.payload.mapper.UserMapper;
 import com.example.Librarymanagementsystem.payload.request.UserRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.data.repository.UserRepository;
+import com.example.Librarymanagementsystem.payload.response.UserResponseDTO;
 import com.example.Librarymanagementsystem.service.impl.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 class UserServiceTest {
 
@@ -61,6 +67,7 @@ class UserServiceTest {
 
     }
 
+
     @Test
     void addUser_ShouldThrowDuplicateEntryException_WhenUserAlreadyExists() {
         when(userRepository.existsByUsername(user1.getUsername())).thenReturn(true);
@@ -71,6 +78,50 @@ class UserServiceTest {
         });
         assertEquals("User already exists with the same username or email", exception1.getMessage());
         verify(userRepository, never()).save(any(User.class));
+    }
+
+
+    @Test
+    void getAllUsers_ShouldReturnAvailableUsers() {
+        List<User> expectedUsers = Collections.singletonList(user1);
+        when(userRepository.findAll()).thenReturn(expectedUsers);
+
+        Response<List<User>> response = userService.getAllUsers();
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals(expectedUsers.size(), response.getMessage().size());
+        assertEquals(expectedUsers, response.getMessage());
+
+        verify(userRepository, times(1)).findAll();
+    }
+
+
+    @Test
+    void getUserById_ShouldReturnUser_WhenUserExists() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+
+        Response<UserResponseDTO> response = userService.getUserById(1L);
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertNotNull(response.getMessage());
+        assertEquals(user1.getFirstName(), response.getMessage().getFirstName());
+        assertEquals(user1.getLastName(), response.getMessage().getLastName());
+
+        verify(userRepository, times(1)).findById(1L);
+    }
+
+
+    @Test
+    void getUserById_ShouldThrowResourceNotFoundException_WhenUserDoesNotExist() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.getUserById(1L);
+        });
+
+        assertEquals("User with ID 1 not found.", exception.getMessage());
+
+        verify(userRepository, times(1)).findById(1L);
     }
 
 }
