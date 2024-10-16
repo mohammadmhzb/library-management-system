@@ -1,11 +1,12 @@
 package com.example.Librarymanagementsystem.payload.request;
 
+import lombok.Data;
 import lombok.Getter;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
+@Data
 public class ReservationRequest {
     @NotNull(message = "Book ID cannot be null")
     @NumberFormat(style = NumberFormat.Style.NUMBER)
