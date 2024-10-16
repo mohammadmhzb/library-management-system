@@ -1,68 +1,66 @@
 package com.example.Librarymanagementsystem.controller;
 
-import com.example.Librarymanagementsystem.data.model.Book;
-import com.example.Librarymanagementsystem.data.model.User;
+import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
 import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.BookService;
-import com.example.Librarymanagementsystem.service.impl.UserService;
+import com.example.Librarymanagementsystem.service.impl.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j;
-import java.util.List;
-
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@RequestMapping("/books")
 @Slf4j
-@Tag(name = "ADMIN API", description = "endpoints that only admin can access them")
+@Tag(name = "Book API", description = "CRUD operations for books")
 @Validated
-public class AdminController {
+@RequiredArgsConstructor
+public class BookController {
 
     private final BookService bookService;
-    private final UserService userService;
+    private final ReservationService reservationService;
 
-    public AdminController(BookService bookService, UserService userService) {
-        this.bookService = bookService;
-        this.userService = userService;
-    }
-
-    @PostMapping("/books")
+    @PostMapping("/")
     @Operation(summary = "Add a new book", description = "Add a new book to the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new book"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<String>> createBook(@Validated @RequestBody BookRequestDTO bookRequestDTO) {
         return new ResponseEntity<>(bookService.addBook(bookRequestDTO), HttpStatus.CREATED);
     }
 
 
-    @GetMapping("/books")
-    @Operation(summary = "Get all books", description = "Retrieve a list of all books in the library")
+    @GetMapping("/")
+    @Operation(summary = "Get books", description = "Retrieve a list of books in the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Response<List<BookResponseDTO>>> getAllBooks() {
-        return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
+    public ResponseEntity<Response<?>> getBooks(@Parameter(description = "Type of reservation status (e.g., APPROVED, PENDING)", required = true)
+                                                @RequestParam ReservationStatus type) {
+        if (type == null)
+            return new ResponseEntity<>(bookService.getAllBooks(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(reservationService.getBooksByReservationStatus(type), HttpStatus.OK);
     }
 
 
-    @GetMapping("/books/{id}")
-    @Operation(summary = "Get one book by id", description = "Retrieve a book by its unique Id in the library" )
+    @GetMapping("/{id}")
+    @Operation(summary = "Get one book by id", description = "Retrieve a book by its unique Id in the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved a book"),
             @ApiResponse(responseCode = "404", description = "Book not found"),
@@ -73,45 +71,46 @@ public class AdminController {
     }
 
 
-    @DeleteMapping("/books/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete a book", description = "Remove a book from the library by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the book"),
             @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Response<String>> deleteBook(@Parameter(description = "ID of the book to be deleted") @PathVariable Long id) {
         return new ResponseEntity<>(bookService.removeBook(id), HttpStatus.OK);
     }
 
 
-
-//    ############ USER
-
-
-
-    @GetMapping("/users")
-    @Operation(summary = "Get all users", description = "Retrieve a list of all users in the system")
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a book (PUT)", description = "Update all fields of an existing book by its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users"),
+            @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public  ResponseEntity<Response<List<User>>> getAllUsers() {
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Response<String>> updateBook(@Validated @RequestBody BookRequestDTO bookRequestDTO,
+                                                       @Parameter(description = "ID of the book to be updated")
+                                                       @PathVariable Long id) {
+        return new ResponseEntity<>(bookService.updateBook(id, bookRequestDTO), HttpStatus.OK);
     }
 
-
-
-    @DeleteMapping("/users/{id}")
-    @Operation(summary = "Delete a user", description = "Remove a users from the system by their ID")
+    @PatchMapping("/{id}")
+    @Operation(summary = "Update specific fields of a book (PATCH)", description = "Update specific fields of an existing book by its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully deleted the user"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
+            @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Response<String>> deleteUser(@Parameter(description = "ID of the user to be deleted") @PathVariable Long id) {
-        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Response<String>> patchBook(@Validated @RequestBody BookRequestDTO bookRequestDTO,
+                                                      @Parameter(description = "ID of the book to be updated")
+                                                      @PathVariable Long id) {
+        return new ResponseEntity<>(bookService.patchBook(id, bookRequestDTO), HttpStatus.OK);
     }
-
 }

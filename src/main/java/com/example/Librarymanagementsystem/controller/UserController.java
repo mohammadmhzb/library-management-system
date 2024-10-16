@@ -95,4 +95,8 @@ public class UserController {
 
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d4164e2ec50fd59ccca96a5d442be5a9941b5751

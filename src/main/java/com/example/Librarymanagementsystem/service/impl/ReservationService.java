@@ -8,6 +8,7 @@ import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
+import com.example.Librarymanagementsystem.data.repository.UserRepository;
 import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.response.Response;
@@ -31,6 +32,7 @@ public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
     private final UserService userService;
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
     public Response<List<Reservation>> getAllReservations() {
         return new Response<>(
@@ -59,6 +61,7 @@ public class ReservationService implements IReservationService {
         User user = createUserFromUserDetails(userDetails);
         reservation.setUser(user);
         reservation.setBook(book);
+        reservation.setStatus(ReservationStatus.PENDING);
         return new Response<>(
                 LocalDateTime.now(),
                 HttpStatus.CREATED.value(),
@@ -109,12 +112,7 @@ public class ReservationService implements IReservationService {
     }
 
     private User createUserFromUserDetails(UserDetailsImpl userDetails) {
-        User user = new User();
-        user.setId(userDetails.getId());
-        user.setUsername(userDetails.getUsername());
-        user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
-        return user;
+        return userRepository.findById(userDetails.getId()).get();
     }
 
 }
