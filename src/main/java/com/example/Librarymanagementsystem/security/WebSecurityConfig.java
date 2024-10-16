@@ -65,6 +65,9 @@ public class WebSecurityConfig {
                                 antMatchers(HttpMethod.GET, "/api/test/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .antMatchers("/auth/**").permitAll()
                                 .antMatchers("/app/**").permitAll()
+                                .antMatchers("/calendar/**").permitAll()
+                                .antMatchers("/authorize").permitAll()
+                                .antMatchers("/oauth2callback").permitAll()
                                 .anyRequest().authenticated()
                 );
 
