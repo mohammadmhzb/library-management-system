@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/src/main/java/com/example/Librarymanagementsystem/librarymanagmentproject-d277fcb44df3.json
+/src/main/java/com/example/Librarymanagementsystem/service/impl/GoogleCalendarService.java
+/src/main/resources/application.properties
