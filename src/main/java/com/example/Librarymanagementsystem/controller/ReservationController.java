@@ -2,6 +2,7 @@ package com.example.Librarymanagementsystem.controller;
 
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.payload.request.EventRequest;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.GoogleCalendarService;

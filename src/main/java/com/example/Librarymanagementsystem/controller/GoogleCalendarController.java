@@ -1,5 +1,6 @@
 package com.example.Librarymanagementsystem.controller;
 
+import com.example.Librarymanagementsystem.payload.request.EventRequest;
 import com.example.Librarymanagementsystem.service.impl.GoogleCalendarService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

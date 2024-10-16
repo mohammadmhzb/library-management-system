@@ -1,6 +1,6 @@
 package com.example.Librarymanagementsystem.service.impl;
 
-import com.example.Librarymanagementsystem.controller.EventRequest;
+import com.example.Librarymanagementsystem.payload.request.EventRequest;
 import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
