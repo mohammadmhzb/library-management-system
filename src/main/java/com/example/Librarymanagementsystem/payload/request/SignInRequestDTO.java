@@ -11,6 +11,8 @@ import lombok.*;
  */
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignInRequestDTO {
 
 	@NotBlank(message = "Email cannot be blank")
