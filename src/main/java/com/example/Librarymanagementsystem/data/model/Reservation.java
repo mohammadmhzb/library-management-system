@@ -40,7 +40,7 @@ public class Reservation extends DateAudit {
     @Schema(description = "Current status of the reservation", example = "PENDING", allowableValues = {"PENDING",
             "APPROVED",
             "REJECTED"}, nullable = true, defaultValue = "PENDING")
-    private ReservationStatus status = ReservationStatus.PENDING;
+    private ReservationStatus status;
 
     @Version
     private  Integer version;

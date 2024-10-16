@@ -4,6 +4,7 @@ import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.response.Response;
+import com.example.Librarymanagementsystem.service.impl.GoogleCalendarService;
 import com.example.Librarymanagementsystem.service.impl.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,12 +12,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,9 +28,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservations")
 @Validated
+@Slf4j
 @Tag(name = "RESERVATION API", description = "CRUD operations for reservations")
 public class ReservationController {
     private final ReservationService reservationService;
+
+    @Autowired
+    private GoogleCalendarService googleCalendarService;
+
+    @Autowired
+    private GoogleCalendarController googleCalendarController;
 
     @GetMapping("/")
     @Operation(summary = "Get all reservations", description = "Retrieve a list of all reservations")
@@ -80,7 +91,14 @@ public class ReservationController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Response<Reservation>> createReservation(
-            @RequestBody @Validated ReservationRequest reservationRequest) {
+            @RequestBody @Validated ReservationRequest reservationRequest) throws IOException {
+
+
+        EventRequest eventRequest = googleCalendarService.eventDetails(reservationRequest);
+
+        String accessToken = googleCalendarController.getAccessToken();
+        googleCalendarService.createEvent(accessToken, eventRequest);
+
         Response<Reservation> newReservation = reservationService.saveReservation(reservationRequest);
         return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
     }
