@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import com.example.Librarymanagementsystem.data.model.Book;
+import com.example.Librarymanagementsystem.data.model.enums.BookAvailability;
 import com.example.Librarymanagementsystem.data.model.enums.BookGenre;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.exception.DuplicateEntryException;
+import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
 import com.example.Librarymanagementsystem.payload.mapper.BookMapper;
 import com.example.Librarymanagementsystem.payload.request.BookRequestDTO;
+import com.example.Librarymanagementsystem.payload.response.BookResponseDTO;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 class BookServiceTest {
@@ -100,5 +104,63 @@ class BookServiceTest {
         assertEquals("Book already exists with the same title: Sapiens: A Brief History of Humankind", exception2.getMessage());
         verify(bookRepository, never()).save(any(Book.class));
     }
+
+
+    @Test
+    void getAllBooks_ShouldReturnAvailableBooks() {
+        when(bookRepository.findAll()).thenReturn(books);
+
+        book1.setAvailability(BookAvailability.AVAILABLE);
+        book2.setAvailability(BookAvailability.AVAILABLE);
+
+        Response<List<BookResponseDTO>> response = bookService.getAllBooks();
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals(2, response.getMessage().size());
+        verify(bookRepository, times(1)).findAll();
+    }
+
+
+    @Test
+    void getBookById_ShouldReturnBook_WhenBookExists() {
+        // Test for book1
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
+        Response<BookResponseDTO> response1 = bookService.getBookById(1L);
+        assertNotNull(response1);
+        assertEquals(HttpStatus.OK.value(), response1.getStatus());
+        assertEquals(book1.getTitle(), response1.getMessage().getTitle());
+        verify(bookRepository, times(1)).findById(1L);
+
+        // Test for book2
+        when(bookRepository.findById(2L)).thenReturn(Optional.of(book2));
+        Response<BookResponseDTO> response2 = bookService.getBookById(2L);
+        assertNotNull(response2);
+        assertEquals(HttpStatus.OK.value(), response2.getStatus());
+        assertEquals(book2.getTitle(), response2.getMessage().getTitle());
+        verify(bookRepository, times(1)).findById(2L);
+    }
+
+
+    @Test
+    void getBookById_ShouldThrowResourceNotFoundException_WhenBookDoesNotExist() {
+        // Mock repository to return an empty Optional when book with ID 1 does not exist
+        when(bookRepository.findById(1L)).thenReturn(Optional.empty());
+        ResourceNotFoundException exception1 = assertThrows(ResourceNotFoundException.class, () -> {
+            bookService.getBookById(1L);
+        });
+        assertEquals("Book with ID 1 not found.", exception1.getMessage());
+        verify(bookRepository, times(1)).findById(1L);
+
+
+        // Mock repository to return an empty Optional when book with ID 2 does not exist
+        when(bookRepository.findById(2L)).thenReturn(Optional.empty());
+        ResourceNotFoundException exception2 = assertThrows(ResourceNotFoundException.class, () -> {
+            bookService.getBookById(2L);
+        });
+        assertEquals("Book with ID 2 not found.", exception2.getMessage());
+        verify(bookRepository, times(1)).findById(2L);
+    }
+
 
 }
