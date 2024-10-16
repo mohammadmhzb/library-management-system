@@ -163,4 +163,44 @@ class BookServiceTest {
     }
 
 
+    @Test
+    void removeBook_ShouldDeleteBook_WhenBookExists() {
+        // Mocking the repository to return true when checking existence for book with ID 1
+        when(bookRepository.existsById(1L)).thenReturn(true);
+        Response<String> response1 = bookService.removeBook(1L);
+        assertNotNull(response1);
+        assertEquals(HttpStatus.OK.value(), response1.getStatus());
+        assertEquals("Book deleted successfully with ID: 1", response1.getMessage());
+        verify(bookRepository, times(1)).deleteById(1L);
+
+
+        // Mocking the repository to return true when checking existence for book with ID 2
+        when(bookRepository.existsById(2L)).thenReturn(true);
+        Response<String> response2 = bookService.removeBook(2L);
+        assertNotNull(response2);
+        assertEquals(HttpStatus.OK.value(), response2.getStatus());
+        assertEquals("Book deleted successfully with ID: 2", response2.getMessage());
+        verify(bookRepository, times(1)).deleteById(2L);
+    }
+
+
+    @Test
+    void removeBook_ShouldThrowResourceNotFoundException_WhenBookDoesNotExist() {
+        // Mocking the repository to return false for book with ID 1
+        when(bookRepository.existsById(1L)).thenReturn(false);
+        ResourceNotFoundException exception1 = assertThrows(ResourceNotFoundException.class, () -> {
+            bookService.removeBook(1L);
+        });
+        assertEquals("Book with ID 1 not found.", exception1.getMessage());
+        verify(bookRepository, never()).deleteById(1L);
+
+
+        // Mocking the repository to return false for book with ID 2
+        when(bookRepository.existsById(2L)).thenReturn(false);
+        ResourceNotFoundException exception2 = assertThrows(ResourceNotFoundException.class, () -> {
+            bookService.removeBook(2L);
+        });
+        assertEquals("Book with ID 2 not found.", exception2.getMessage());
+        verify(bookRepository, never()).deleteById(2L);
+    }
 }
