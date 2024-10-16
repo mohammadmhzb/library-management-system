@@ -203,4 +203,72 @@ class BookServiceTest {
         assertEquals("Book with ID 2 not found.", exception2.getMessage());
         verify(bookRepository, never()).deleteById(2L);
     }
+
+
+    @Test
+    void updateBook_ShouldUpdateBook_WhenBookExists() {
+
+        when(bookRepository.existsById(1L)).thenReturn(true);
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
+        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+
+        Response<String> response = bookService.updateBook(1L, bookRequestDTO1);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals("Book updated successfully with ID 1", response.getMessage());
+
+        verify(bookRepository, times(1)).findById(1L);
+        verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+
+    @Test
+    void updateBook_ShouldThrowResourceNotFoundException_WhenBookDoesNotExist() {
+
+        // Mock the repository to indicate the book does not exist
+        when(bookRepository.existsById(1L)).thenReturn(false);
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            bookService.updateBook(1L, bookRequestDTO1);
+        });
+        assertEquals("Book with ID 1 not found.", exception.getMessage());
+
+        // Verify that the save method was never called since the book doesn't exist
+        verify(bookRepository, never()).save(any(Book.class));
+    }
+
+
+    @Test
+    void patchBook_ShouldPatchBook_WhenBookExists() {
+
+        // Mock the repository to indicate the book exists
+        when(bookRepository.existsById(2L)).thenReturn(true);
+        when(bookRepository.findById(2L)).thenReturn(Optional.of(book2));
+        when(bookRepository.save(any(Book.class))).thenReturn(book2);
+
+        Response<String> response = bookService.patchBook(2L, bookRequestDTO2);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals("Book updated successfully with ID 2", response.getMessage());
+
+        verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+
+    @Test
+    void patchBook_ShouldThrowResourceNotFoundException_WhenBookDoesNotExist() {
+
+        // Mock the repository to indicate that the book does not exist
+        when(bookRepository.existsById(2L)).thenReturn(false);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            bookService.patchBook(2L, bookRequestDTO2);
+        });
+
+        assertEquals("Book with ID 2 not found.", exception.getMessage());
+
+        // Verify that save method was never called
+        verify(bookRepository, never()).save(any(Book.class));
+    }
 }
