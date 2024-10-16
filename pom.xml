@@ -120,6 +120,13 @@
             <version>20210307</version> <!-- یا آخرین نسخه موجود -->
         </dependency>
 
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>1.1.0</version> <!-- با جاوا 8 سازگار است -->
+        </dependency>
+
+
 
     </dependencies>
 

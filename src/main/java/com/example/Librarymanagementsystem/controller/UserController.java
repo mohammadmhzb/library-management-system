@@ -23,6 +23,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -37,13 +41,14 @@ public class UserController {
     private final BookService bookService;
     private final ReservationService reservationService;
     private final UserService userService;
+    private final GoogleCalendarController googleCalendarController;
 
 
-    public UserController(BookService bookService, ReservationService reservationService, UserService userService) {
+    public UserController(BookService bookService, ReservationService reservationService, UserService userService, GoogleCalendarController googleCalendarController) {
         this.bookService = bookService;
         this.reservationService = reservationService;
         this.userService = userService;
-
+        this.googleCalendarController = googleCalendarController;
     }
 
     @GetMapping("/books/")
@@ -97,7 +102,22 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Response<Reservation>> createReservation(
-            @RequestBody @Validated ReservationRequest reservationRequest) {
+            @RequestBody @Validated ReservationRequest reservationRequest) throws IOException {
+//        ZonedDateTime now = ZonedDateTime.now();
+//
+//        ZonedDateTime futureDate = now.plusDays(30);
+//        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+//        String formattedStartDateTime = now.format(formatter);
+//        String formattedEndDateTime = futureDate.format(formatter);
+//
+//        EventRequest eventRequest = new EventRequest();
+//         eventRequest.setSummary("sss");
+//         eventRequest.setDescription("d;l;sad;la");
+//         eventRequest.setLocation("Online meeting");
+//         eventRequest.setStartDateTime(formattedStartDateTime);
+//         eventRequest.setEndDateTime(formattedEndDateTime);
+//
+//        googleCalendarController.createEvent(eventRequest);
         Response<Reservation> newReservation = reservationService.saveReservation(reservationRequest);
         return new ResponseEntity<>(newReservation, HttpStatus.CREATED);
     }
