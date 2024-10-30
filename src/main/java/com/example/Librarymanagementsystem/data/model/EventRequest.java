@@ -1,4 +1,4 @@
-package com.example.Librarymanagementsystem.controller;
+package com.example.Librarymanagementsystem.data.model;
 
 import lombok.Getter;
 import lombok.Setter;

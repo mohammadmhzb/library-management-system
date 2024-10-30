@@ -1,6 +1,6 @@
 package com.example.Librarymanagementsystem.service.impl;
 
-import com.example.Librarymanagementsystem.controller.EventRequest;
+import com.example.Librarymanagementsystem.data.model.EventRequest;
 import com.example.Librarymanagementsystem.data.model.Book;
 import com.example.Librarymanagementsystem.data.repository.BookRepository;
 import com.example.Librarymanagementsystem.data.repository.ReservationRepository;
@@ -8,6 +8,7 @@ import com.example.Librarymanagementsystem.exception.ResourceNotFoundException;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,10 +23,21 @@ public class GoogleCalendarService {
     @Autowired
     private final BookRepository bookRepository;
 
-    private static final String CLIENT_ID = "567684994663-j161n7jv1fk3vobtrp2sbkpiiei57n5d.apps.googleusercontent.com";
-    private static final String CLIENT_SECRET = "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";
-    private static final String REDIRECT_URI = "http://localhost:8080/api/v1/calendar/oauth2callback";
-    private static final String SCOPE = "https://www.googleapis.com/auth/calendar.events";
+    @Value("${app.CLIENT_ID}")
+    private static String CLIENT_ID;
+
+    @Value("${app.CLIENT_SECRET}")
+    private static String CLIENT_SECRET;
+
+    @Value("${app.REDIRECT_URI}")
+    private static String REDIRECT_URI;
+
+    @Value("${app.SCOPE}")
+    private static String SCOPE;
+
+    @Value("${app.googleCalendarService.createEvent.url}")
+    private String googleCalendarAccountUrl;
+
 
     public GoogleCalendarService(BookRepository bookRepository, ReservationRepository reservationRepository) {
         this.bookRepository = bookRepository;
@@ -80,7 +92,8 @@ public class GoogleCalendarService {
     }
 
     public String createEvent(String accessToken, EventRequest eventRequest) throws IOException {
-        String url = "https://www.googleapis.com/calendar/v3/calendars/821cadd900aa06d42ddd999c4368e754eca71e114a589daa261aa8ec88b93ef3@group.calendar.google.com/events";
+
+        String url = googleCalendarAccountUrl;
 
 
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
