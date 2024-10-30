@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
-    private final UserService userService;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
@@ -52,22 +51,41 @@ public class ReservationService implements IReservationService {
 
     @Transactional
     public Response<Reservation> saveReservation(ReservationRequest reservationRequest) {
+        Book book = validateBookAvailability(reservationRequest.getBookId());
+        User user = getCurrentUserAsUser();
+        Reservation reservation = createReservation(user, book);
+        return buildResponse(reservation);
+    }
+
+    private Book validateBookAvailability(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + bookId));
+        if (book.getAvailability().equals(BookAvailability.RESERVED))
+            throw new ResourceNotFoundException("Book availability is reserved");
+        return book;
+    }
+
+    private User getCurrentUserAsUser() {
         UserDetailsImpl userDetails = getCurrentUser();
+        return createUserFromUserDetails(userDetails);
+    }
 
-        Book book = bookRepository.findById(reservationRequest.getBookId())
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + reservationRequest.getBookId()));
-
+    private Reservation createReservation(User user, Book book) {
         Reservation reservation = new Reservation();
-        User user = createUserFromUserDetails(userDetails);
         reservation.setUser(user);
         reservation.setBook(book);
         reservation.setStatus(ReservationStatus.PENDING);
+        return reservationRepository.save(reservation);
+    }
+
+    private Response<Reservation> buildResponse(Reservation reservation) {
         return new Response<>(
                 LocalDateTime.now(),
                 HttpStatus.CREATED.value(),
-                reservationRepository.save(reservation)
+                reservation
         );
     }
+
 
     public Response<String> deleteReservation(Long id) {
         reservationRepository.deleteById(id);
@@ -78,6 +96,7 @@ public class ReservationService implements IReservationService {
         );
     }
 
+    @Override
     public Response<Reservation> updateReservationStatus(Long id, ReservationStatus status) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
         reservation.setStatus(status);
@@ -112,7 +131,8 @@ public class ReservationService implements IReservationService {
     }
 
     private User createUserFromUserDetails(UserDetailsImpl userDetails) {
-        return userRepository.findById(userDetails.getId()).get();
+        return userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userDetails.getId()));
     }
 
 }

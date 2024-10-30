@@ -4,10 +4,7 @@ import com.example.Librarymanagementsystem.data.model.enums.UserRole;
 import lombok.Data;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 
 @Data
@@ -28,11 +25,12 @@ public class UserRequestDTO {
     private String username;
 
     @NotBlank(message = "Phone number cannot be blank")
+    @Size(min = 11, max = 11, message = "Phone number must be exactly 11 digits")
     @Pattern(regexp = "^0\\d{10}$", message = "Phone number must be 11 digits and start with 0")
     private String phoneNumber;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 6, max = 6, message = "Password must be exactly 6 characters long")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
     @NotBlank(message = "Email cannot be blank")
@@ -40,7 +38,7 @@ public class UserRequestDTO {
     @Size(max = 30)
     private String email;
 
-    @NotBlank(message = "Role cannot be blank")
+    @NotNull(message = "Role cannot be null")
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
 }

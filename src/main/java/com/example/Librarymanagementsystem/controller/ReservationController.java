@@ -3,6 +3,7 @@ package com.example.Librarymanagementsystem.controller;
 import com.example.Librarymanagementsystem.data.model.EventRequest;
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
+import com.example.Librarymanagementsystem.payload.request.EventRequest;
 import com.example.Librarymanagementsystem.payload.request.ReservationRequest;
 import com.example.Librarymanagementsystem.payload.response.Response;
 import com.example.Librarymanagementsystem.service.impl.GoogleCalendarService;
@@ -44,6 +45,7 @@ public class ReservationController {
     @Operation(summary = "Get all reservations", description = "Retrieve a list of all reservations")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of reservations"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
@@ -56,6 +58,7 @@ public class ReservationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of reservations for the user"),
             @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
@@ -70,6 +73,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "200", description = "Successfully updated the reservation status"),
             @ApiResponse(responseCode = "404", description = "Reservation not found"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PreAuthorize("hasAnyRole('ROLE_MANAGER')")
@@ -85,6 +89,7 @@ public class ReservationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new reservation"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Response<Reservation>> createReservation(
@@ -105,6 +110,7 @@ public class ReservationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the reservation"),
             @ApiResponse(responseCode = "404", description = "Reservation not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Response<String>> deleteReservation(

@@ -33,37 +33,37 @@ public class User extends DateAudit {
 
     @NotBlank
     @Column(name = "first_name")
-    @Max(30)
+    @Size(max = 30)
     @Schema(description = "First name of the user", example = "John")
     private String firstName;
 
     @NotBlank
     @Column(name = "last_name")
-    @Max(30)
+    @Size(max = 30)
     @Schema(description = "Last name of the user", example = "Doe")
     private String lastName;
 
     @NotBlank
     @Column(name = "username")
-    @Max(15)
+    @Size(max = 15)
     @Schema(description = "Username of the user", example = "johndoe")
     private String username;
 
     @NotBlank
-    @Size(max = 6, min = 6)
+    @Size(min = 6)
     @Column(name = "password")
     @Schema(description = "Password for the user account", example = "password123")
     private String password;
 
     @NotBlank
-    @Max(11)
+    @Size(min = 11, max = 11, message = "Phone number must be exactly 11 digits")
     @Column(name = "phone_number")
     @Schema(description = "Phone number of the user", example = "09150835353")
     private String phoneNumber;
 
     @NotBlank
     @NaturalId
-    @Max(30)
+    @Size(max = 30)
     @Column(name = "email")
     @Email
     @Schema(description = "Email address of the user", example = "john.doe@example.com")

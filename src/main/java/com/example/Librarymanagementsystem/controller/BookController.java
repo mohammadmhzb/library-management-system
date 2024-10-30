@@ -36,6 +36,7 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new book"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -48,6 +49,7 @@ public class BookController {
     @Operation(summary = "Get books", description = "Retrieve a list of books in the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of books"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Response<?>> getBooks(@Parameter(description = "Type of reservation status (e.g., APPROVED, PENDING)", required = true)
@@ -63,6 +65,7 @@ public class BookController {
     @Operation(summary = "Get one book by id", description = "Retrieve a book by its unique Id in the library")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved a book"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
@@ -75,6 +78,7 @@ public class BookController {
     @Operation(summary = "Delete a book", description = "Remove a book from the library by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the book"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
@@ -89,6 +93,7 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
             @ApiResponse(responseCode = "404", description = "Book not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
@@ -105,6 +110,7 @@ public class BookController {
             @ApiResponse(responseCode = "200", description = "Successfully updated the book"),
             @ApiResponse(responseCode = "404", description = "Book not found"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
