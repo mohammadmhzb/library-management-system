@@ -1,5 +1,6 @@
 package com.example.Librarymanagementsystem.controller;
 
+import com.example.Librarymanagementsystem.data.model.EventRequest;
 import com.example.Librarymanagementsystem.data.model.Reservation;
 import com.example.Librarymanagementsystem.data.model.enums.ReservationStatus;
 import com.example.Librarymanagementsystem.payload.request.EventRequest;
